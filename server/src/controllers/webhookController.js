@@ -1,4 +1,5 @@
 import verifySignature from '../utils/verifySignature.js';
+import reviewQueue from '../queues/reviewQueue.js';
 
 async function handleWebhook(req,res){
     //verify signature
@@ -6,7 +7,7 @@ async function handleWebhook(req,res){
         console.log('Invalid signature');
         return res.status(401).json({error:'Invalid signature'});
     }
-
+                                                                                
     //github event type
     const event=req.headers['x-github-event'];
 
@@ -25,8 +26,19 @@ async function handleWebhook(req,res){
                 author:pull_request.user.login,
                 diffUrl:pull_request.diff_url,
                 repoName:repository.full_name,
+                repoFullName:repository.full_name,
+                action,
             };
             console.log('PR Data:',prData);
+            // Add job to review queue
+            const job = await reviewQueue.add(
+                'review-pr', // Job name- for filtering..
+                prData,
+                {
+                    jobId:`pr-${repository.full_name}-${pull_request.number}-${action}`, // Unique job ID to prevent duplicates
+                }
+            );
+            console.log(`Added job ${job.id} to review queue for PR #${pull_request.number}`);
         }
     }
     res.status(200).json({received:true});
