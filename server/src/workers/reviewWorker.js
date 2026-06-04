@@ -40,17 +40,17 @@ const worker = new Worker(
 );
 
 worker.on('completed', (job, result) => {
-  console.log(`✅ Job ${job.id} completed`);
+  console.log(`Job ${job.id} completed`);
   console.log('Result:', result);
 });
 
 worker.on('failed', (job, err) => {
-  console.error(`❌ Job ${job.id} failed:`, err.message);
+  console.error( `Job ${job.id} failed:`, err.message);
   console.error(`Attempts made: ${job.attemptsMade} of ${job.opts.attempts}`);
 });
 
 worker.on('progress', (job, progress) => {
-  console.log(`⏳ Job ${job.id} progress: ${progress}%`);
+  console.log(`Job ${job.id} progress: ${progress}%`);
 });
 
 worker.on('error', (err) => {
