@@ -110,16 +110,17 @@ const worker = new Worker(
 );
 
 worker.on('completed', (job, result) => {
-  console.log(`✅ Job ${job.id} completed — Score: ${result.score}/100`);
+  console.log(`✅ Job ${job.id} completed`);
+  console.log('Result:', result);
 });
 
 worker.on('failed', (job, err) => {
-  console.error(`❌ Job ${job.id} failed: ${err.message}`);
-  console.error(`Attempts: ${job.attemptsMade} of ${job.opts.attempts}`);
+  console.error(`❌ Job ${job.id} failed:`, err.message);
+  console.error(`Attempts made: ${job.attemptsMade} of ${job.opts.attempts}`);
 });
 
 worker.on('progress', (job, progress) => {
-  console.log(`⏳ Progress: ${progress}%`);
+  console.log(`⏳ Job ${job.id} progress: ${progress}%`);
 });
 
 worker.on('error', (err) => {

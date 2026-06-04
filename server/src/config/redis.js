@@ -1,7 +1,7 @@
 import Redis from 'ioredis';
 import 'dotenv/config';
 
-// Factory function — har baar naya connection banao
+// Factory function to create new Redis connections for workers
 const createRedisConnection = () => new Redis({
   host: process.env.REDIS_HOST || 'localhost',
   port: parseInt(process.env.REDIS_PORT) || 6379,
