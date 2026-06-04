@@ -1,0 +1,2 @@
+AI-powered code review platform that automates PR reviews via GitHub Webhooks. Uses BullMQ + Redis for job queuing, Gemini API for structured code analysis, and posts review comments directly on GitHub PRs with scoring and merge gate enforcement. Features a React dashboard with real-time updates via Socket.io, manual code review mode, RAG-based codebase context using vector embeddings, and Slack notifications.
+(working on it)
