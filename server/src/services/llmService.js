@@ -1,8 +1,5 @@
 import axios from 'axios';
 
-// Build the prompt — this is the most important function
-// Good prompt = good review
-// Bad prompt = garbage output
 function buildPrompt(prTitle, author, formattedDiff) {
   return `
 You are an expert senior software engineer performing a code review.
@@ -74,9 +71,7 @@ async function getCodeReview(prTitle, author, formattedDiff) {
         ],
         generationConfig: {
           temperature: 0.1,
-          // Low temperature = consistent structured output
-          // High temperature = creative but unpredictable
-          // We need predictable JSON — so 0.1
+          // Low temperature consistent structured output
 
           maxOutputTokens: 2048,
           // Limit response size
@@ -91,7 +86,7 @@ async function getCodeReview(prTitle, author, formattedDiff) {
 
     console.log('Raw Gemini response received');
 
-    // Clean the response — LLM sometimes adds backticks even when told not to
+    // Clean the response
     const cleaned = rawText
       .replace(/```json/g, '') // remove ```json
       .replace(/```/g, '')     // remove ```
