@@ -70,12 +70,8 @@ async function getCodeReview(prTitle, author, formattedDiff) {
           },
         ],
         generationConfig: {
-          temperature: 0.1,
-          // Low temperature consistent structured output
-
-          maxOutputTokens: 2048,
-          // Limit response size
-          // Prevents extremely long responses
+          temperature: 0.1, // Low temperature consistent structured output
+         maxOutputTokens: 2048, // Limit response size     
         },
       }
     );
