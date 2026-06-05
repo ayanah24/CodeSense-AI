@@ -1,7 +1,7 @@
 import { Worker } from 'bullmq';
 import { createRedisConnection } from '../config/redis.js';
 import { fetchPRDiff } from '../services/githubService.js';
-import { parseDiff, formatDiffForPrompt } from '../services/diffParser.js';
+import { parseDiff, formatDiffForLLM } from '../services/diffParser.js';
 import { getCodeReview } from '../services/llmService.js';
 import 'dotenv/config';
 
@@ -43,7 +43,7 @@ const worker = new Worker(
     // Step 3 — Format diff for LLM prompt
     console.log('Step 3: Formatting diff for prompt...');
     await job.updateProgress(50);
-    const formattedDiff = formatDiffForPrompt(parsedFiles);
+    const formattedDiff = formatDiffForLLM(parsedFiles);
 
     // Step 4 — Call Gemini API
     console.log('Step 4: Calling Gemini API...');
