@@ -1,7 +1,7 @@
 function parseDiff(rawDiff) {
-    const files = [];
-    const currentFile = null;
-    const lineNumber = 0;
+    let files = [];
+    let currentFile = null;
+    let lineNumber = 0;
 
     const lines = rawDiff.split('\n');
 
