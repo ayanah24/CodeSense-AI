@@ -10,7 +10,7 @@ function parseDiff(rawDiff) {
             if (currentFile) {
                 files.push(currentFile);
             }
-            const match = line.match(/diff --git a\/.+b\/(.+)/);
+            const match = line.match(/diff --git a\/.+ b\/(.+)/);
             const filename = match ? match[1] : 'unknown';
 
             currentFile = {
@@ -24,7 +24,7 @@ function parseDiff(rawDiff) {
         }
   //line that starts with + but not +++ is an added line
         else if (line.startsWith('+') && !line.startsWith('+++')) {
-            if (curentFile) {
+            if (currentFile) {
                 currentFile.changes.push({
                     line: lineNumber,
                     content: line.substring(1).trim(),
