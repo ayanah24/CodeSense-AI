@@ -22,10 +22,11 @@ async function getCodeReview(prTitle, author, formattedDiff) {
     );
 
     // Extract text from Gemini response structure
+
     const rawText =
       response.data.candidates[0].content.parts[0].text;
 
-    console.log('Raw Gemini response received');
+    console.log('Raw Gemini response received successfully');
 
     // Clean the response
     const cleaned = rawText
