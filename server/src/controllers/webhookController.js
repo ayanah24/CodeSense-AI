@@ -27,6 +27,7 @@ async function handleWebhook(req,res){
                 diffUrl:pull_request.diff_url,
                 repoName:repository.full_name,
                 repoFullName:repository.full_name,
+                commitSha:pull_request.head.sha, 
                 action,
             };
             console.log('PR Data:',prData);

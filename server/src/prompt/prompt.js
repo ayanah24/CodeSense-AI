@@ -56,4 +56,4 @@ Be specific — always mention exact file and line number.
   `.trim();
 }
 
-export default {buildPrompt};
+export default buildPrompt;

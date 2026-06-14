@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { buildPrompt } from '../prompt/prompt.js';
+import buildPrompt from '../prompt/prompt.js';
 
 // Call Gemini API and get structured review
 async function getCodeReview(prTitle, author, formattedDiff) {

@@ -1,6 +1,6 @@
 import { Worker } from 'bullmq';
 import { createRedisConnection } from '../config/redis.js';
-import { fetchPRDiff } from '../services/githubService.js';
+import { fetchPRDiff, postPRComment,setStatusCheck} from '../services/githubService.js';
 import { parseDiff, formatDiffForLLM } from '../services/diffParser.js';
 import { getCodeReview } from '../services/llmService.js';
 import 'dotenv/config';
@@ -9,7 +9,7 @@ const worker = new Worker(
   'code-review',
 
   async (job) => {
-    const { prNumber, prTitle, author, diffUrl, repoName } = job.data;
+    const { prNumber, prTitle, author, diffUrl, repoName, commitSha } = job.data;
 
     console.log(`\n=============================`);
     console.log(`Worker picked job: ${job.id}`);
@@ -25,7 +25,7 @@ const worker = new Worker(
 
     // Step 2 — Parse diff into clean format
     console.log('Step 2: Parsing diff...');
-    await job.updateProgress(30);
+    await job.updateProgress(25);
     const parsedFiles = parseDiff(rawDiff);
     console.log(`Parsed ${parsedFiles.length} changed files`);
 
@@ -42,17 +42,28 @@ const worker = new Worker(
 
     // Step 3 — Format diff for LLM prompt
     console.log('Step 3: Formatting diff for prompt...');
-    await job.updateProgress(50);
+    await job.updateProgress(40);
     const formattedDiff = formatDiffForLLM(parsedFiles);
 
     // Step 4 — Call Gemini API
     console.log('Step 4: Calling Gemini API...');
-    await job.updateProgress(70);
+    await job.updateProgress(60);
     const review = await getCodeReview(prTitle, author, formattedDiff);
     console.log('Review received from Gemini');
+  
+    //step 5 - post comment on github pr
+    console.log('Step 5: Posting review comment on GitHub...');
+    await job.updateProgress(75);
+    await postPRComment(repoName, prNumber, review);
+    console.log('Review comment posted successfully');
 
-    // Step 5 — Log the full review
+    //step 6 - set merge gate status check
+    console.log('Step 6: Setting merge gate status check...');
     await job.updateProgress(90);
+    await setStatusCheck(repoName, commitSha, review.score.overall);
+
+    //print review summary and scores to console
+    await job.updateProgress(100);
     console.log('\n========== AI REVIEW ==========');
     console.log(`Summary: ${review.summary}`);
     console.log(`\nScores:`);
@@ -86,9 +97,6 @@ const worker = new Worker(
 
     await job.updateProgress(100);
 
-    // Day 4 — this is where we post comment on GitHub
-    // and set merge gate status check
-
     return {
       prNumber,
       repoName,
@@ -109,6 +117,7 @@ const worker = new Worker(
   }
 );
 
+//Event listeners 
 worker.on('completed', (job, result) => {
   console.log(`✅ Job ${job.id} completed — Score: ${result.score}/100`);
 });
