@@ -20,6 +20,8 @@
     "dotenv": "^17.4.2",
     "express": "^5.2.1",
     "ioredis": "^5.11.0",
+    "mongodb": "^7.3.0",
+    "mongoose": "^9.7.0",
     "router": "^2.2.0"
   },
   "devDependencies": {

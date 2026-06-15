@@ -1,9 +1,14 @@
 import express from 'express';
 import cors from 'cors';
 import webhookRoutes from './routes/webhook.js';
+import connectMongoDB from './config/mongodb.js';
+import reviewRoutes from './routes/reviews.js';
 import dotenv from 'dotenv';
 dotenv.config();
 const app = express();
+
+//mongoDB server setup
+await connectMongoDB();
 
 app.use(cors());
 
@@ -17,10 +22,12 @@ app.use((req, res, next) => {
 });
 
 app.use('/webhook', webhookRoutes);
+app.use('/api/reviews',reviewRoutes);
 
 app.get('/', (req, res) => {
     res.json({ status: 'codeSense AI server is running' });
 });
+
 const PORT = process.env.PORT || 3000;
 app.listen(PORT,()=>{
     console.log(`Server is running on port ${PORT}`);

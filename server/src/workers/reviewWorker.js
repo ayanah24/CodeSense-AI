@@ -1,9 +1,13 @@
 import { Worker } from 'bullmq';
 import { createRedisConnection } from '../config/redis.js';
-import { fetchPRDiff, postPRComment,setStatusCheck} from '../services/githubService.js';
+import { fetchPRDiff, postPRComment, setStatusCheck } from '../services/githubService.js';
 import { parseDiff, formatDiffForLLM } from '../services/diffParser.js';
 import { getCodeReview } from '../services/llmService.js';
+import connectMongoDB from '../config/mongodb.js';
+import Review from '../models/Review.js';
 import 'dotenv/config';
+
+await connectMongoDB();
 
 const worker = new Worker(
   'code-review',
@@ -50,7 +54,24 @@ const worker = new Worker(
     await job.updateProgress(60);
     const review = await getCodeReview(prTitle, author, formattedDiff);
     console.log('Review received from Gemini');
-  
+
+    //Save review to MongoDB
+    console.log('Saving review to MongoDB...');
+    const savedReview = await Review.create({
+      PrNumber: prNumber,
+      PrTitle: prTitle,
+      author,
+      repoName,
+      commitSha,
+      summary: review.summary,
+      score: review.score,
+      issues: review.issues,
+      positive: review.positives,
+      status: 'reviewed',
+      passed: review.score.overall >= 70,
+    });
+    console.log(`Review saved to MongoDB — ID: ${savedReview._id}`);
+
     //step 5 - post comment on github pr
     console.log('Step 5: Posting review comment on GitHub...');
     await job.updateProgress(75);
@@ -80,7 +101,7 @@ const worker = new Worker(
       review.issues.forEach((issue, i) => {
         const emoji =
           issue.severity === 'critical' ? '🔴' :
-          issue.severity === 'warning' ? '🟡' : '💡';
+            issue.severity === 'warning' ? '🟡' : '💡';
         console.log(`  ${emoji} ${issue.severity.toUpperCase()} — ${issue.title}`);
         console.log(`     File: ${issue.file} : Line ${issue.line}`);
         console.log(`     ${issue.description}`);
