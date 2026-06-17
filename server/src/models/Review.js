@@ -2,7 +2,7 @@ import mongoose from 'mongoose';
 
 const reviewSchema = new mongoose.Schema(
     {
-         PrNumber:{
+         prNumber:{
             type:Number,
             required:true
          },
@@ -60,9 +60,7 @@ const reviewSchema = new mongoose.Schema(
          },
 
 },
-{
-timeStamps: true,
-},
+{timestamps:true}
 );
 
 const Review = mongoose.model('Review',reviewSchema);

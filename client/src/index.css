@@ -1,0 +1,63 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+@import "tailwindcss";
+
+/* ── Design tokens ──────────────────────────────────────────────────────── */
+:root {
+  --radius: 0.5rem;
+
+  /* Dashboard dark theme */
+  --background:       #0d1117;
+  --foreground:       #c9d1d9;
+  --card:             #161b22;
+  --card-foreground:  #c9d1d9;
+  --muted:            #21262d;
+  --muted-foreground: #8b949e;
+  --border:           #30363d;
+
+  /* Semantic colours */
+  --success: #3fb950;
+  --danger:  #f85149;
+  --warning: #d29922;
+  --info:    #58a6ff;
+
+  /* Typography */
+  --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif;
+}
+
+/* ── Base ───────────────────────────────────────────────────────────────── */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  border-color: var(--border);
+}
+
+body {
+  font-family: var(--font-sans);
+  background-color: #ffffff;
+  color: #0f0f0f;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── Landing gradient text ──────────────────────────────────────────────── */
+.gradient-text {
+  background: linear-gradient(90deg, #7c3aed 0%, #6366f1 35%, #22c55e 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* ── Dashboard dark shell ───────────────────────────────────────────────── */
+.dashboard-shell {
+  background-color: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans);
+}
+
+/* Tailwind colour helpers mapped to CSS vars (used in dashboard) */
+.text-foreground        { color: var(--foreground); }
+.text-muted-foreground  { color: var(--muted-foreground); }
+.bg-background          { background-color: var(--background); }
+.bg-card                { background-color: var(--card); }
+.bg-muted               { background-color: var(--muted); }
+.border-border          { border-color: var(--border); }

@@ -6,7 +6,7 @@ async function getAllReviews(req,res) {
         const reviews= await Review.find()
         .sort({createdAt:-1})
         .select(
-            'prNumber prTitle author repoName score status passes createdAt'
+            'prNumber PrTitle author repoName score status passed createdAt'
         )
         .limit(50);
 
