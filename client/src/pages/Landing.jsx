@@ -1,6 +1,5 @@
 import { Link } from 'react-router-dom';
 
-// ── Data ──────────────────────────────────────────────────────────────────────
 const features = [
   { icon: '🐞', title: 'Bug Detection',         desc: 'Catches logic errors, null derefs, and off-by-ones before review.' },
   { icon: '🛡️', title: 'Security Scanning',     desc: 'Flags injection, auth gaps, and unsafe patterns by default.' },
@@ -10,7 +9,7 @@ const features = [
   { icon: '📊', title: 'Real-time Dashboard',   desc: 'See every review across every repo in one organized view.' },
 ];
 
-// ── Logo ─────────────────────────────────────────────────────────────────────
+//logo
 function Logo() {
   return (
     <Link to="/" style={{ display: 'flex', alignItems: 'center', gap: 8, textDecoration: 'none' }}>
@@ -32,7 +31,6 @@ function Logo() {
   );
 }
 
-// ── GitHub icon ───────────────────────────────────────────────────────────────
 function GithubIcon() {
   return (
     <svg viewBox="0 0 24 24" fill="currentColor" style={{ width: 15, height: 15 }}>
@@ -41,7 +39,6 @@ function GithubIcon() {
   );
 }
 
-// ── Arrow icon ────────────────────────────────────────────────────────────────
 function ArrowRight() {
   return (
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" style={{ width: 14, height: 14 }}>
@@ -50,7 +47,6 @@ function ArrowRight() {
   );
 }
 
-// ── Landing ───────────────────────────────────────────────────────────────────
 export default function Landing() {
   return (
     <div style={{ minHeight: '100vh', background: '#ffffff', color: '#0f0f0f', fontFamily: 'Inter, ui-sans-serif, system-ui, sans-serif' }}>
@@ -97,9 +93,8 @@ export default function Landing() {
         </div>
       </header>
 
-      {/* ── Hero ────────────────────────────────────────────────────────────── */}
+      {/* Hero */}
       <section style={{ position: 'relative', overflow: 'hidden' }}>
-        {/* Subtle purple radial glow */}
         <div style={{
           position: 'absolute', inset: 0, zIndex: 0, pointerEvents: 'none',
           background: 'radial-gradient(ellipse 70% 50% at 50% 0%, rgba(124,58,237,0.09) 0%, transparent 70%)',
@@ -156,7 +151,7 @@ export default function Landing() {
         </div>
       </section>
 
-      {/* ── How it works ────────────────────────────────────────────────────── */}
+      {/*  How it works */}
       <section id="how" style={{ borderTop: '1px solid #f1f5f9', background: 'rgba(248,250,252,0.6)', padding: '80px 24px' }}>
         <div style={{ maxWidth: 1000, margin: '0 auto' }}>
 
@@ -201,7 +196,7 @@ export default function Landing() {
         </div>
       </section>
 
-      {/* ── Features ────────────────────────────────────────────────────────── */}
+      {/* Features */}
       <section id="features" style={{ borderTop: '1px solid #f1f5f9', padding: '80px 24px' }}>
         <div style={{ maxWidth: 1000, margin: '0 auto' }}>
 
@@ -236,7 +231,7 @@ export default function Landing() {
         </div>
       </section>
 
-      {/* ── CTA strip ───────────────────────────────────────────────────────── */}
+      {/*CTA strip */}
       <section style={{ borderTop: '1px solid #f1f5f9', background: 'rgba(248,250,252,0.6)', padding: '72px 24px', textAlign: 'center' }}>
         <div style={{ maxWidth: 560, margin: '0 auto' }}>
           <h2 style={{ fontSize: 'clamp(24px, 3.5vw, 34px)', fontWeight: 700, color: '#0f0f0f', letterSpacing: '-0.02em', marginBottom: 24 }}>
@@ -260,7 +255,7 @@ export default function Landing() {
         </div>
       </section>
 
-      {/* ── Footer ──────────────────────────────────────────────────────────── */}
+      {/*  Footer */}
       <footer style={{ borderTop: '1px solid #e2e8f0', padding: '24px' }}>
         <div style={{ maxWidth: 1100, margin: '0 auto', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 12 }}>
           <Logo />

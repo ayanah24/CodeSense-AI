@@ -89,7 +89,7 @@ export default function DashboardLayout({ children }) {
 
         <nav style={{ display: 'flex', flexDirection: 'column', gap: 2, padding: '16px 12px' }}>
           <NavLink to="/dashboard" label="Dashboard" icon={<IconDashboard />} exact />
-          <NavLink to="/reviews"   label="Reviews"   icon={<IconReviews />} />
+          <NavLink to="/dashboard"   label="Reviews"   icon={<IconReviews />} />
         </nav>
 
         <div style={{

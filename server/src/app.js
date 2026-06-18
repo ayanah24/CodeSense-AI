@@ -3,6 +3,7 @@ import cors from 'cors';
 import webhookRoutes from './routes/webhook.js';
 import connectMongoDB from './config/mongodb.js';
 import reviewRoutes from './routes/reviews.js';
+import manualRoutes from './routes/manual.js';
 import dotenv from 'dotenv';
 dotenv.config();
 const app = express();
@@ -23,6 +24,7 @@ app.use((req, res, next) => {
 
 app.use('/webhook', webhookRoutes);
 app.use('/api/reviews',reviewRoutes);
+app.use('/api/review/manual',manualRoutes);
 
 app.get('/', (req, res) => {
     res.json({ status: 'codeSense AI server is running' });

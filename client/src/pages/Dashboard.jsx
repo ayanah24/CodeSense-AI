@@ -11,8 +11,8 @@ function timeAgo(dateStr) {
   if (days  > 0) return `${days} day${days  > 1 ? 's' : ''} ago`;
   if (hours > 0) return `${hours} hour${hours > 1 ? 's' : ''} ago`;
   return 'just now';
-}
-
+}       
+ 
 export default function Dashboard() {
   const [reviews, setReviews] = useState([]);
   const [stats,   setStats]   = useState(null);

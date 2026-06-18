@@ -20,3 +20,12 @@ export async function fetchStats() {
     const res=await axios.get(`${API_BASE}/reviews/stats`);
     return res.data.data;
 }
+
+//manual review
+export async function manualReview(code, language) {
+    const res = await axios.post(`${API_BASE}/review/manual`, {
+        code,
+        language,
+    });
+    return res.data.data;
+}

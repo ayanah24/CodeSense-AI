@@ -6,7 +6,7 @@ const reviewSchema = new mongoose.Schema(
             type:Number,
             required:true
          },
-            PrTitle:{
+            prTitle:{
             type:String,
             required:true
          },
@@ -46,7 +46,7 @@ const reviewSchema = new mongoose.Schema(
              fix: {type:String},
             },
          ],
-         positive:[String],
+         positives:[String],
 
          //job status
          status:{
