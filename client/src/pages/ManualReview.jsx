@@ -68,16 +68,6 @@ function Navbar() {
 
       {/* Nav links */}
       <nav style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
-        <Link to="/dashboard" style={{
-          fontSize: 13, fontWeight: 500, color: 'var(--muted-foreground)',
-          textDecoration: 'none', padding: '6px 12px', borderRadius: 6,
-          transition: 'color 0.15s, background 0.15s',
-        }}
-          onMouseEnter={e => { e.currentTarget.style.color = '#fff'; e.currentTarget.style.background = 'var(--card)'; }}
-          onMouseLeave={e => { e.currentTarget.style.color = 'var(--muted-foreground)'; e.currentTarget.style.background = 'transparent'; }}
-        >
-          Dashboard
-        </Link>
         <span style={{
           fontSize: 13, fontWeight: 600, color: '#fff',
           padding: '6px 12px', borderRadius: 6,
