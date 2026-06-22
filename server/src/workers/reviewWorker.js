@@ -5,6 +5,7 @@ import { parseDiff, formatDiffForLLM } from '../services/diffParser.js';
 import { getCodeReview } from '../services/llmService.js';
 import connectMongoDB from '../config/mongodb.js';
 import Review from '../models/Review.js';
+import Repo from '../models/Repo.js';
 import 'dotenv/config';
 
 await connectMongoDB();
@@ -54,19 +55,29 @@ const worker = new Worker(
     await job.updateProgress(60);
     const review = await getCodeReview(prTitle, author, formattedDiff);
     console.log('Review received from Gemini');
-
+   
+    //look up repo owner
+    console.log('Looking up repo owner');
+    const repo=await Repo.findOne({repoName,isActive:true});
+    if(!repo){
+      console.log(`Repo ${repoName} not registered-saving review withought owner`);
+    }else{
+      console.log(`Repo owner found-userId: ${repo.userId}`);
+    }
+    
     //Save review to MongoDB
     console.log('Saving review to MongoDB...');
     const savedReview = await Review.create({
-      PrNumber: prNumber,
-      PrTitle: prTitle,
+      userId: repo ? repo.userId : undefined,
+      prNumber,
+      prTitle,
       author,
       repoName,
       commitSha,
       summary: review.summary,
       score: review.score,
       issues: review.issues,
-      positive: review.positives,
+      positives: review.positives,
       status: 'reviewed',
       passed: review.score.overall >= 70,
     });

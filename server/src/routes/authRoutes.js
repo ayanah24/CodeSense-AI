@@ -3,6 +3,7 @@ import passport from 'passport';
 import { signToken, SESSION_TTL } from '../utils/jwt.js';
 import { authMiddleware } from '../middleware/authMiddleware.js';
 import redisConnection from '../config/redis.js';
+import User from '../models/User.js';
 
 const router = express.Router();
 
@@ -58,11 +59,26 @@ router.post('/logout', authMiddleware, async (req, res) => {
   }
 });
 
-router.get('/me', authMiddleware, (req, res) => {
-  res.json({
-    userId: req.user.userId,
-    role:   req.user.role,
-  });
+router.get('/me', authMiddleware, async (req, res) => {
+  try {
+    const user = await User.findById(req.user.userId).select(
+      'username displayName avatarUrl role email'
+    );
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    res.json({
+      userId: user._id.toString(),
+      username: user.username,
+      displayName: user.displayName,
+      avatarUrl: user.avatarUrl,
+      role: user.role,
+      email: user.email,
+    });
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to fetch user' });
+  }
 });
 
 export default router;

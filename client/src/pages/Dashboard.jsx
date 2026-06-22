@@ -84,11 +84,11 @@ export default function Dashboard() {
               <div style={{ display: 'grid', gridTemplateColumns: '1fr auto', gap: 16 }}>
                 <div>
                   <div style={{ fontSize: 11, color: 'var(--muted-foreground)', marginBottom: 4 }}>
-                    <span style={{ fontFamily: 'monospace' }}>#{r.PrNumber}</span>
+                    <span style={{ fontFamily: 'monospace' }}>#{r.prNumber}</span>
                     {' • '}
                     {r.repoName}
                   </div>
-                  <div style={{ fontSize: 15, fontWeight: 600, color: '#fff', marginBottom: 4 }}>{r.PrTitle}</div>
+                  <div style={{ fontSize: 15, fontWeight: 600, color: '#fff', marginBottom: 4 }}>{r.prTitle}</div>
                   <div style={{ fontSize: 12, color: 'var(--muted-foreground)' }}>
                     by {r.author} · {timeAgo(r.createdAt)}
                   </div>

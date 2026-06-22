@@ -2,6 +2,15 @@ import mongoose from 'mongoose';
 
 const reviewSchema = new mongoose.Schema(
     {
+      //ownership of repo
+      userId:{
+         type:mongoose.Schema.Types.ObjectId,
+         ref:'User',
+         required:false,
+         index:true,
+      },
+      
+      //pr info
          prNumber:{
             type:Number,
             required:true

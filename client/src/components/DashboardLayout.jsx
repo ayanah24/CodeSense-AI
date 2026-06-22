@@ -75,6 +75,7 @@ function Logo() {
 }
 
 // ── UserPanel ─────────────────────────────────────────────────────────────────
+// ── UserPanel ─────────────────────────────────────────────────────────────────
 function UserPanel() {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
@@ -86,38 +87,53 @@ function UserPanel() {
 
   if (!user) return null;
 
-  // Generate initials avatar from userId (last 2 chars)
-  // Replace this with real username/avatar once you add it to /auth/me
-  const initials = user.userId?.slice(-2).toUpperCase() ?? 'U';
-
   return (
-    <div style={{
-      padding: '12px 16px',
-      borderTop: '1px solid var(--border)',
-    }}>
-      {/* User row */}
-      <div style={{
-        display: 'flex', alignItems: 'center', gap: 10,
-        marginBottom: 10,
-      }}>
-        {/* Avatar circle */}
-        <div style={{
-          width: 30, height: 30, borderRadius: '50%',
-          background: 'rgba(124,58,237,0.20)',
-          border: '1px solid rgba(124,58,237,0.35)',
-          display: 'flex', alignItems: 'center', justifyContent: 'center',
-          fontSize: 11, fontWeight: 700, color: '#a78bfa',
-          flexShrink: 0,
-        }}>
-          {initials}
-        </div>
+    <div style={{ padding: '12px 16px', borderTop: '1px solid var(--border)' }}>
 
-        {/* Role badge */}
+      {/* User row */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 10 }}>
+
+        {/* Avatar — real GitHub photo or fallback initials */}
+        {user.avatarUrl ? (
+          <img
+            src={user.avatarUrl}
+            alt={user.username}
+            style={{
+              width: 30, height: 30,
+              borderRadius: '50%',
+              border: '1px solid rgba(124,58,237,0.35)',
+              flexShrink: 0,
+            }}
+          />
+        ) : (
+          <div style={{
+            width: 30, height: 30, borderRadius: '50%',
+            background: 'rgba(124,58,237,0.20)',
+            border: '1px solid rgba(124,58,237,0.35)',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            fontSize: 11, fontWeight: 700, color: '#a78bfa',
+            flexShrink: 0,
+          }}>
+            {user.username?.slice(0, 2).toUpperCase() ?? 'U'}
+          </div>
+        )}
+
+        {/* Username + role */}
         <div style={{ minWidth: 0 }}>
           <div style={{
-            fontSize: 11, fontWeight: 600,
+            fontSize: 12, fontWeight: 600,
+            color: '#ffffff',
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+            whiteSpace: 'nowrap',
+          }}>
+            {user.username ?? 'User'}
+          </div>
+          <div style={{
+            fontSize: 10, fontWeight: 600,
             color: user.role === 'admin' ? '#f59e0b' : '#a78bfa',
-            textTransform: 'uppercase', letterSpacing: '0.05em',
+            textTransform: 'uppercase',
+            letterSpacing: '0.05em',
           }}>
             {user.role}
           </div>
@@ -139,14 +155,14 @@ function UserPanel() {
           transition: 'background 0.15s, color 0.15s, border-color 0.15s',
         }}
         onMouseEnter={e => {
-          e.currentTarget.style.background = 'rgba(248,81,73,0.08)';
-          e.currentTarget.style.color = '#f85149';
-          e.currentTarget.style.borderColor = 'rgba(248,81,73,0.3)';
+          e.currentTarget.style.background    = 'rgba(248,81,73,0.08)';
+          e.currentTarget.style.color         = '#f85149';
+          e.currentTarget.style.borderColor   = 'rgba(248,81,73,0.3)';
         }}
         onMouseLeave={e => {
-          e.currentTarget.style.background = 'transparent';
-          e.currentTarget.style.color = 'var(--muted-foreground)';
-          e.currentTarget.style.borderColor = 'var(--border)';
+          e.currentTarget.style.background    = 'transparent';
+          e.currentTarget.style.color         = 'var(--muted-foreground)';
+          e.currentTarget.style.borderColor   = 'var(--border)';
         }}
       >
         <IconLogout />
