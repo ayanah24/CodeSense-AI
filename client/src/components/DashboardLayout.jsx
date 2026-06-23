@@ -29,6 +29,13 @@ const IconLogout = () => (
   </svg>
 );
 
+const IconRepo = () => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"
+    strokeLinecap="round" strokeLinejoin="round" style={{ width: 15, height: 15 }}>
+    <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22" />
+  </svg>
+);
+
 // ── NavLink ──────────────────────────────────────────────────────────────────
 function NavLink({ to, label, icon, exact = false }) {
   const { pathname } = useLocation();
@@ -75,7 +82,6 @@ function Logo() {
 }
 
 // ── UserPanel ─────────────────────────────────────────────────────────────────
-// ── UserPanel ─────────────────────────────────────────────────────────────────
 function UserPanel() {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
@@ -89,11 +95,7 @@ function UserPanel() {
 
   return (
     <div style={{ padding: '12px 16px', borderTop: '1px solid var(--border)' }}>
-
-      {/* User row */}
       <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 10 }}>
-
-        {/* Avatar — real GitHub photo or fallback initials */}
         {user.avatarUrl ? (
           <img
             src={user.avatarUrl}
@@ -117,30 +119,23 @@ function UserPanel() {
             {user.username?.slice(0, 2).toUpperCase() ?? 'U'}
           </div>
         )}
-
-        {/* Username + role */}
         <div style={{ minWidth: 0 }}>
           <div style={{
-            fontSize: 12, fontWeight: 600,
-            color: '#ffffff',
-            overflow: 'hidden',
-            textOverflow: 'ellipsis',
-            whiteSpace: 'nowrap',
+            fontSize: 12, fontWeight: 600, color: '#ffffff',
+            overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
           }}>
             {user.username ?? 'User'}
           </div>
           <div style={{
             fontSize: 10, fontWeight: 600,
             color: user.role === 'admin' ? '#f59e0b' : '#a78bfa',
-            textTransform: 'uppercase',
-            letterSpacing: '0.05em',
+            textTransform: 'uppercase', letterSpacing: '0.05em',
           }}>
             {user.role}
           </div>
         </div>
       </div>
 
-      {/* Logout button */}
       <button
         onClick={handleLogout}
         style={{
@@ -155,14 +150,14 @@ function UserPanel() {
           transition: 'background 0.15s, color 0.15s, border-color 0.15s',
         }}
         onMouseEnter={e => {
-          e.currentTarget.style.background    = 'rgba(248,81,73,0.08)';
-          e.currentTarget.style.color         = '#f85149';
-          e.currentTarget.style.borderColor   = 'rgba(248,81,73,0.3)';
+          e.currentTarget.style.background  = 'rgba(248,81,73,0.08)';
+          e.currentTarget.style.color       = '#f85149';
+          e.currentTarget.style.borderColor = 'rgba(248,81,73,0.3)';
         }}
         onMouseLeave={e => {
-          e.currentTarget.style.background    = 'transparent';
-          e.currentTarget.style.color         = 'var(--muted-foreground)';
-          e.currentTarget.style.borderColor   = 'var(--border)';
+          e.currentTarget.style.background  = 'transparent';
+          e.currentTarget.style.color       = 'var(--muted-foreground)';
+          e.currentTarget.style.borderColor = 'var(--border)';
         }}
       >
         <IconLogout />
@@ -176,8 +171,6 @@ function UserPanel() {
 export default function DashboardLayout({ children }) {
   return (
     <div className="dashboard-shell" style={{ minHeight: '100vh', display: 'flex' }}>
-
-      {/* Sidebar */}
       <aside style={{
         width: 224, flexShrink: 0,
         display: 'flex', flexDirection: 'column',
@@ -187,16 +180,12 @@ export default function DashboardLayout({ children }) {
         <Logo />
 
         <nav style={{ display: 'flex', flexDirection: 'column', gap: 2, padding: '16px 12px' }}>
-          <NavLink to="/dashboard" label="Dashboard" icon={<IconDashboard />} exact />
-          <NavLink to="/reviews"   label="Reviews"   icon={<IconReviews />} />
+          <NavLink to="/dashboard"    label="Dashboard"    icon={<IconDashboard />} exact />
+          {/* <NavLink to="`reviews/${id}`"label="Reviews"      icon={<IconReviews />} /> */}
+          <NavLink to="/repositories" label="Repositories" icon={<IconRepo />} />
         </nav>
 
-        {/* Back to site */}
-        <div style={{
-          padding: '12px 16px',
-          fontSize: '12px',
-          color: 'var(--muted-foreground)',
-        }}>
+        <div style={{ padding: '12px 16px', fontSize: '12px', color: 'var(--muted-foreground)' }}>
           <Link to="/" style={{ color: 'inherit', textDecoration: 'none', transition: 'color 0.15s' }}
             onMouseEnter={e => e.target.style.color = '#ffffff'}
             onMouseLeave={e => e.target.style.color = 'var(--muted-foreground)'}
@@ -205,13 +194,11 @@ export default function DashboardLayout({ children }) {
           </Link>
         </div>
 
-        {/* User panel sits at the very bottom */}
         <div style={{ marginTop: 'auto' }}>
           <UserPanel />
         </div>
       </aside>
 
-      {/* Content */}
       <div style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column' }}>
         <main style={{ flex: 1, minWidth: 0 }}>{children}</main>
       </div>

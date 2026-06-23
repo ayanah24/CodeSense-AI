@@ -7,6 +7,7 @@ const userSchema= new mongoose.Schema({
     avatarUrl:{type:String},
     email:{type:String},
     role:{type:String, enum:['user','admin'],default:'user'},
+    githubAccessToken:{type:String, select:false},
 },{timestamps:true});
 
 export default mongoose.model('User',userSchema);

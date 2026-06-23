@@ -5,6 +5,7 @@ import Landing from './pages/Landing.jsx';
 import Dashboard from './pages/Dashboard.jsx';
 import ReviewDetail from './pages/ReviewDetail.jsx';
 import ManualReview from './pages/ManualReview.jsx';
+import Repositories from './pages/Repositories.jsx';
 export default function App(){
   return(
     <BrowserRouter>
@@ -28,6 +29,9 @@ export default function App(){
         <ManualReview />
         </ProtectedRoute>
         } />
+       <Route path="/repositories" element={
+            <ProtectedRoute><Repositories /></ProtectedRoute>
+          } />
     </Routes>
    </AuthProvider>
     </BrowserRouter>
