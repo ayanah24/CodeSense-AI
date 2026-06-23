@@ -49,6 +49,13 @@ router.get('/github/callback',
   }
 );
 
+//get /auth/token for socket connection
+router.get('/token',authMiddleware,(req,res)=>{
+  const token=req.cookies?.token;
+  res.json({token});
+});
+
+
 router.post('/logout', authMiddleware, async (req, res) => {
   try {
     await redisConnection.del(`session:${req.user.jti}`);

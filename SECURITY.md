@@ -16,5 +16,3 @@
 - Never returned in any API response
 - Deleted when you disconnect your account
 
-## Reporting Security Issues
-Email: security@codesense.ai

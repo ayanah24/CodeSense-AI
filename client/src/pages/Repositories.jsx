@@ -142,20 +142,6 @@ function RepoCard({ repo, onDisconnect }) {
           {disconnecting ? 'Disconnecting...' : 'Disconnect'}
         </button>
       </div>
-
-      {/* Bottom row — hookId info */}
-      {repo.hookId && (
-        <div style={{
-          marginTop:    12,
-          paddingTop:   12,
-          borderTop:    '1px solid #21262d',
-          fontSize:     11,
-          color:        '#8b949e',
-          fontFamily:   'monospace',
-        }}>
-          Hook ID: {repo.hookId}
-        </div>
-      )}
     </div>
   );
 }

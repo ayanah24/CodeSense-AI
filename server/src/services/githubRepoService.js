@@ -66,8 +66,8 @@ async function registerWebhook(encryptedToken, repoFullName) {
         config: {
           url:          process.env.WEBHOOK_URL,
           content_type: 'json',
-          secret:       process.env.WEBHOOK_SECRET,
-          insecure_ssl: '0',
+          secret:       process.env.GITHUB_WEBHOOK_SECRET,
+          insecure_ssl: '1',
         },
       },
       { headers: getGitHubHeaders(encryptedToken) }

@@ -8,7 +8,10 @@ import Review from '../models/Review.js';
 import Repo from '../models/Repo.js';
 import 'dotenv/config';
 
+
 await connectMongoDB();
+
+const publisher= createRedisConnection();
 
 const worker = new Worker(
   'code-review',
@@ -82,6 +85,27 @@ const worker = new Worker(
       passed: review.score.overall >= 70,
     });
     console.log(`Review saved to MongoDB — ID: ${savedReview._id}`);
+
+    //redis publish — only when we know the repo owner
+    if(repo?.userId){
+      const payload = JSON.stringify({
+        userId: repo.userId.toString(),
+        review: {
+          _id:       savedReview._id,
+          prNumber:  savedReview.prNumber,
+          prTitle:   savedReview.prTitle,
+          author:    savedReview.author,
+          repoName:  savedReview.repoName,
+          score:     savedReview.score,
+          passed:    savedReview.passed,
+          status:    savedReview.status,
+          createdAt: savedReview.createdAt,
+        },
+      });
+
+      await publisher.publish('review:complete', payload);
+      console.log(`Published review:complete for userId: ${repo.userId}`);
+    }
 
     //step 5 - post comment on github pr
     console.log('Step 5: Posting review comment on GitHub...');

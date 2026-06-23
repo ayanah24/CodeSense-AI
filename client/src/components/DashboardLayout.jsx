@@ -75,7 +75,7 @@ function Logo() {
         <IconCode />
       </div>
       <span style={{ fontSize: '14px', fontWeight: 600, letterSpacing: '-0.01em', color: '#ffffff' }}>
-        CodeSense AI
+         <Link to="/"> CodeSense AI</Link>
       </span>
     </div>
   );
@@ -185,14 +185,14 @@ export default function DashboardLayout({ children }) {
           <NavLink to="/repositories" label="Repositories" icon={<IconRepo />} />
         </nav>
 
-        <div style={{ padding: '12px 16px', fontSize: '12px', color: 'var(--muted-foreground)' }}>
+        {/* <div style={{ padding: '12px 16px', fontSize: '12px', color: 'var(--muted-foreground)' }}>
           <Link to="/" style={{ color: 'inherit', textDecoration: 'none', transition: 'color 0.15s' }}
             onMouseEnter={e => e.target.style.color = '#ffffff'}
             onMouseLeave={e => e.target.style.color = 'var(--muted-foreground)'}
           >
             ← Back to site
           </Link>
-        </div>
+        </div> */}
 
         <div style={{ marginTop: 'auto' }}>
           <UserPanel />
