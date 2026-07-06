@@ -3,7 +3,7 @@ import 'dotenv/config';
 
 // Factory function to create new Redis connections for workers
 const createRedisConnection = () => new Redis({
-  host: process.env.REDIS_HOST || 'localhost',
+  host: process.env.REDIS_HOST || 'redis',
   port: parseInt(process.env.REDIS_PORT) || 6379,
   maxRetriesPerRequest: null,
 });

@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { io } from 'socket.io-client';
 
-const SOCKET_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
+const SOCKET_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
 
 export function useSocket() {
     const socketRef = useRef(null);
@@ -21,7 +21,7 @@ export function useSocket() {
                 }
 
                 const { token } = await res.json();
-               
+
                 //socket connect to token 
                 const socket = io(SOCKET_URL, {
                     auth: { token },
@@ -30,7 +30,7 @@ export function useSocket() {
                     reconnectionDelay: 1000,
                     reconnectionAttempts: 5,
                 });
-               
+
                 //event listeners
                 socket.on('connect', () => {
                     console.log('socket connected:', socket.id);
@@ -72,15 +72,21 @@ export function useSocket() {
     function on(event, callback) {
         if (socketRef.current) {
             socketRef.current.on(event, callback);
+        } else {
+            setTimeout(() => {
+                if (socketRef.current) {
+                    socketRef.current.on(event, callback);
+                }
+            }, 2000);
         }
     }
 
     //event off 
-     function off(event, callback) {
-    if (socketRef.current) {
-      socketRef.current.off(event, callback);
+    function off(event, callback) {
+        if (socketRef.current) {
+            socketRef.current.off(event, callback);
+        }
     }
-  }
 
-  return {connected,on,off}
+    return { connected, on, off }
 }

@@ -1,14 +1,13 @@
-import './config/env.js'; // ← must be first: loads dotenv before any other import
 import express from 'express';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
 import passport, { initPassport } from './config/passport.js';
-import {createServer} from 'http';
+import { createServer } from 'http';
 
 import connectMongoDB from './config/mongodb.js';
 import redisConnection from './config/redis.js';
 import { initSocket } from './socket/socketManager.js';
-                     
+
 import webhookRoutes from './routes/webhook.js';
 import reviewRoutes from './routes/reviews.js';
 import manualRoutes from './routes/manual.js';
@@ -28,7 +27,7 @@ await connectMongoDB();
 //  MIDDLEWARE
 app.use(cors({
   origin: process.env.CLIENT_URL,
-  credentials: true,             
+  credentials: true,
 }));
 
 // raw body for webhook HMAC verification
@@ -40,8 +39,8 @@ app.use((req, res, next) => {
   express.json()(req, res, next);
 });
 
-app.use(cookieParser());          
-app.use(passport.initialize());     
+app.use(cookieParser());
+app.use(passport.initialize());
 
 // ROUTES 
 // public
@@ -87,10 +86,10 @@ app.use('/webhook', webhookRoutes);
 // protected
 app.use('/api/reviews', authMiddleware, reviewRoutes);
 app.use('/api/review/manual', authMiddleware, manualRoutes);
-app.use('/api/repos',authMiddleware,repoRoutes);
+app.use('/api/repos', authMiddleware, repoRoutes);
 
 // http server socket
-const httpServer=createServer(app);
+const httpServer = createServer(app);
 initSocket(httpServer);
 
 const PORT = process.env.PORT || 3000;
