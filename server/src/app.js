@@ -1,3 +1,4 @@
+import 'dotenv/config';
 import express from 'express';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
@@ -6,6 +7,7 @@ import { createServer } from 'http';
 
 import connectMongoDB from './config/mongodb.js';
 import redisConnection from './config/redis.js';
+import { pinecone } from "./config/pineconeClient.js";
 import { initSocket } from './socket/socketManager.js';
 
 import webhookRoutes from './routes/webhook.js';
@@ -23,6 +25,13 @@ const app = express();
 // DB + Redis
 await connectMongoDB();
 
+//pinecone
+try {
+  const pineconeDesc = await pinecone.describeIndex(process.env.PINECONE_INDEX);
+  console.log('Pinecone connected - index:', pineconeDesc.name);
+} catch (err) {
+  console.error('Pinecone connection error:', err.message);
+}
 
 //  MIDDLEWARE
 app.use(cors({
@@ -65,7 +74,7 @@ app.get('/api/health', async (req, res) => {
     checks.redis = 'ok';
   } catch (e) { checks.redis = `error: ${e.message}`; }
 
-  // Gemini API key — just check it's set and looks right
+  // Gemini API key
   const geminiKey = process.env.GEMINI_API_KEY;
   checks.geminiKey = geminiKey ? (geminiKey.length > 10 ? 'set' : 'too short') : 'missing';
 

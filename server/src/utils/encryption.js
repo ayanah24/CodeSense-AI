@@ -1,5 +1,11 @@
 import crypto from 'crypto';
 
+if (!process.env.TOKEN_ENCRYPTION_KEY) {
+  throw new Error(
+    'Missing required environment variable: TOKEN_ENCRYPTION_KEY. ' +
+    'Generate one with: node -e "console.log(require(\'crypto\').randomBytes(32).toString(\'hex\'))"'
+  );
+}
 const KEY = Buffer.from(process.env.TOKEN_ENCRYPTION_KEY, 'hex');
 const IV_LENGTH = 16;
 const ALGORITHM = 'aes-256-cbc';
