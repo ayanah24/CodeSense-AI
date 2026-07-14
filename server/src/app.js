@@ -17,6 +17,7 @@ import authRoutes from './routes/authRoutes.js';
 import { authMiddleware } from './middleware/authMiddleware.js';
 
 import repoRoutes from './routes/repoRoutes.js';
+import { generateEmbedding } from './services/embeddingService.js';
 
 initPassport(); // must run after dotenv.config() so env vars are available
 
@@ -56,7 +57,19 @@ app.use(passport.initialize());
 app.get('/', (req, res) => {
   res.json({ status: 'codeSense AI server is running' });
 });
-
+app.get('/api/test-embedding', async (req, res) => {
+  try {
+    const { generateEmbedding } = await import('./services/embeddingService.js');
+    const vector = await generateEmbedding('function processUser(userId) { return db.find({ id: userId }); }');
+    res.json({
+      success: true,
+      vectorLength: vector.length,
+      first5Values: vector.slice(0, 5)
+    });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
 // ── Health check — tests all upstream services ──────────────────────────────
 app.get('/api/health', async (req, res) => {
   const checks = {};
