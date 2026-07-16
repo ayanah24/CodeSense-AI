@@ -9,7 +9,7 @@ function getGitHubHeaders(encryptedToken) {
   const token = decrypt(encryptedToken);
   return {
     Authorization: `Bearer ${token}`,
-    Accept:        'application/vnd.github.v3+json',
+    Accept: 'application/vnd.github.v3+json',
   };
 }
 
@@ -32,22 +32,22 @@ async function fetchUserRepos(encryptedToken) {
       {
         headers: getGitHubHeaders(encryptedToken),
         params: {
-          type:     'owner',   
-          sort:     'updated',
+          type: 'owner',
+          sort: 'updated',
           per_page: 100,
         },
       }
     );
 
     return response.data.map(repo => ({
-      id:          repo.id,
-      name:        repo.name,
-      fullName:    repo.full_name,
-      private:     repo.private,
+      id: repo.id,
+      name: repo.name,
+      fullName: repo.full_name,
+      private: repo.private,
       description: repo.description,
-      language:    repo.language,
-      updatedAt:   repo.updated_at,
-      stars:       repo.stargazers_count,
+      language: repo.language,
+      updatedAt: repo.updated_at,
+      stars: repo.stargazers_count,
     }));
 
   } catch (error) {
@@ -60,13 +60,13 @@ async function registerWebhook(encryptedToken, repoFullName) {
     const response = await axios.post(
       `https://api.github.com/repos/${repoFullName}/hooks`,
       {
-        name:   'web',
+        name: 'web',
         active: true,
         events: ['pull_request'],
         config: {
-          url:          process.env.WEBHOOK_URL,
+          url: process.env.WEBHOOK_URL,
           content_type: 'json',
-          secret:       process.env.GITHUB_WEBHOOK_SECRET,
+          secret: process.env.GITHUB_WEBHOOK_SECRET,
           insecure_ssl: '1',
         },
       },
@@ -111,4 +111,50 @@ async function deleteWebhook(encryptedToken, repoFullName, hookId) {
   }
 }
 
-export { fetchUserRepos, registerWebhook, deleteWebhook };
+//fetches all file paths in a repo from the main branch
+async function fetchRepoFileTree(encryptedToken, repoFullName) {
+  try {
+    // recursive=1 means get ALL files in all subdirectories
+    const response = await axios.get(
+      `https://api.github.com/repos/${repoFullName}/git/trees/HEAD?recursive=1`,
+      { headers: getGitHubHeaders(encryptedToken) }
+    );
+
+    // filter only files (not directories) and only code files
+    const codeExtensions = ['.js', '.jsx', '.ts', '.tsx', '.py', '.java', '.go', '.rs'];
+
+    const codeFiles = response.data.tree.filter(item =>
+      item.type === 'blob' && //blob = file , tree = directory
+      codeExtensions.some(ext => item.path.endsWith(ext)) &&
+      !item.path.includes('node_modules') &&
+      !item.path.includes('.min.') &&
+      !item.path.includes('dist/')
+    );
+
+    console.log(`Found ${codeFiles.length} code files in ${repoFullName}`);
+    return codeFiles;
+
+  } catch (error) {
+    handleGitHubError(error, 'fetchRepoFileTree');
+  }
+}
+
+// fetches the actual content of a single file
+async function fetchFileContent(encryptedToken, repoFullName, filePath) {
+  try {
+    const response = await axios.get(
+      `https://api.github.com/repos/${repoFullName}/contents/${filePath}`,
+      { headers: getGitHubHeaders(encryptedToken) }
+    );
+
+    // github returns file content as base64
+    const content = Buffer.from(response.data.content, 'base64').toString('utf-8');
+    return content;
+
+  } catch (error) {
+    console.error(`Failed to fetch ${filePath}: ${error.message}`);
+    return null;
+  }
+}
+
+export { fetchUserRepos, registerWebhook, deleteWebhook, fetchRepoFileTree, fetchFileContent };

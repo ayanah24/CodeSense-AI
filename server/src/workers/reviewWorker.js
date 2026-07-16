@@ -7,11 +7,11 @@ import connectMongoDB from '../config/mongodb.js';
 import Review from '../models/Review.js';
 import Repo from '../models/Repo.js';
 import 'dotenv/config';
-
+import { searchSimilarChunks } from '../services/pineconeService.js';
 
 await connectMongoDB();
 
-const publisher= createRedisConnection();
+const publisher = createRedisConnection();
 
 const worker = new Worker(
   'code-review',
@@ -53,21 +53,38 @@ const worker = new Worker(
     await job.updateProgress(40);
     const formattedDiff = formatDiffForLLM(parsedFiles);
 
-    // Step 4 — Call Gemini API
+    // Step 3.5 — Look up repo owner (moved up — needed for RAG)
+    console.log('Looking up repo owner...');
+    const repo = await Repo.findOne({ repoName, isActive: true });
+    if (!repo) {
+      console.log(`Repo ${repoName} not registered — reviewing without context`);
+    } else {
+      console.log(`Repo owner found — userId: ${repo.userId}`);
+    }
+
+    // Step 3.6 — RAG: search pinecone for relevant codebase context
+    console.log('Step 3.6: Searching codebase context from Pinecone...');
+    let codebaseContext = [];
+    if (repo) {
+      try {
+        codebaseContext = await searchSimilarChunks(
+          repo._id.toString(),
+          formattedDiff,
+          5
+        );
+        console.log(`Found ${codebaseContext.length} relevant chunks from codebase`);
+      } catch (err) {
+        console.warn('Pinecone search failed — reviewing without context:', err.message);
+        codebaseContext = [];
+      }
+    }
+
+    // Step 4 — Call Gemini API with codebase context
     console.log('Step 4: Calling Gemini API...');
     await job.updateProgress(60);
-    const review = await getCodeReview(prTitle, author, formattedDiff);
+    const review = await getCodeReview(prTitle, author, formattedDiff, codebaseContext);
     console.log('Review received from Gemini');
-   
-    //look up repo owner
-    console.log('Looking up repo owner');
-    const repo=await Repo.findOne({repoName,isActive:true});
-    if(!repo){
-      console.log(`Repo ${repoName} not registered-saving review withought owner`);
-    }else{
-      console.log(`Repo owner found-userId: ${repo.userId}`);
-    }
-    
+
     //Save review to MongoDB
     console.log('Saving review to MongoDB...');
     const savedReview = await Review.create({
@@ -87,18 +104,18 @@ const worker = new Worker(
     console.log(`Review saved to MongoDB — ID: ${savedReview._id}`);
 
     //redis publish — only when we know the repo owner
-    if(repo?.userId){
+    if (repo?.userId) {
       const payload = JSON.stringify({
         userId: repo.userId.toString(),
         review: {
-          _id:       savedReview._id,
-          prNumber:  savedReview.prNumber,
-          prTitle:   savedReview.prTitle,
-          author:    savedReview.author,
-          repoName:  savedReview.repoName,
-          score:     savedReview.score,
-          passed:    savedReview.passed,
-          status:    savedReview.status,
+          _id: savedReview._id,
+          prNumber: savedReview.prNumber,
+          prTitle: savedReview.prTitle,
+          author: savedReview.author,
+          repoName: savedReview.repoName,
+          score: savedReview.score,
+          passed: savedReview.passed,
+          status: savedReview.status,
           createdAt: savedReview.createdAt,
         },
       });

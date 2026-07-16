@@ -1,6 +1,20 @@
-import axios from 'axios';
+function buildPrompt(prTitle, author, formattedDiff, codebaseContext = []) {
 
-function buildPrompt(prTitle, author, formattedDiff) {
+  // build context section only if we have chunks
+  const contextSection = codebaseContext.length > 0
+    ? `
+EXISTING CODEBASE CONTEXT:
+The following are relevant code snippets from the existing codebase.
+Use these to understand patterns, conventions, and existing implementations.
+
+${codebaseContext.map(chunk => `
+--- ${chunk.filePath} (lines ${chunk.startLine}-${chunk.endLine}) ---
+${chunk.content}
+`).join('\n')}
+
+`
+    : '';
+
   return `
 You are an expert senior software engineer performing a code review.
 Analyze the following Pull Request changes carefully.

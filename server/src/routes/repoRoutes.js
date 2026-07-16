@@ -1,11 +1,12 @@
 import express from 'express';
 import Repo from '../models/Repo.js';
-import User from '../models/User.js';        
+import User from '../models/User.js';
 import {
   fetchUserRepos,
   registerWebhook,
   deleteWebhook,
 } from '../services/githubRepoService.js';
+import { indexRepo } from '../services/indexingService.js';
 
 const router = express.Router();
 
@@ -13,7 +14,7 @@ const router = express.Router();
 router.get('/', async (req, res) => {
   try {
     const repos = await Repo.find({
-      userId:   req.user.userId,
+      userId: req.user.userId,
       isActive: true,
     }).sort({ createdAt: -1 });
 
@@ -34,14 +35,14 @@ router.get('/github', async (req, res) => {
     if (!user.githubAccessToken) {
       return res.status(400).json({
         success: false,
-        error:   'GitHub token not found. Please re-login.',
+        error: 'GitHub token not found. Please re-login.',
       });
     }
 
     const repos = await fetchUserRepos(user.githubAccessToken);
 
     const connectedRepos = await Repo.find({
-      userId:   req.user.userId,
+      userId: req.user.userId,
       isActive: true,
     }).select('githubRepoId');
 
@@ -58,13 +59,13 @@ router.get('/github', async (req, res) => {
     if (err.message === 'GITHUB_TOKEN_INVALID') {
       return res.status(401).json({
         success: false,
-        error:   'GitHub token expired. Please login again.',
+        error: 'GitHub token expired. Please login again.',
       });
     }
     if (err.message === 'GITHUB_TOKEN_INSUFFICIENT_SCOPE') {
       return res.status(403).json({
         success: false,
-        error:   'Insufficient permissions. Please re-authorize.',
+        error: 'Insufficient permissions. Please re-authorize.',
       });
     }
     console.error('Error fetching GitHub repos:', err.message);
@@ -80,21 +81,21 @@ router.post('/connect', async (req, res) => {
     if (!githubRepoId || !repoName) {
       return res.status(400).json({
         success: false,
-        error:   'githubRepoId and repoName are required',
+        error: 'githubRepoId and repoName are required',
       });
     }
 
     // Already connected check
     const existing = await Repo.findOne({
       githubRepoId,
-      userId:   req.user.userId,
+      userId: req.user.userId,
       isActive: true,
     });
 
     if (existing) {
       return res.status(409).json({
         success: false,
-        error:   'Repo already connected',
+        error: 'Repo already connected',
       });
     }
 
@@ -137,19 +138,19 @@ router.post('/disconnect', async (req, res) => {
     if (!repoId) {
       return res.status(400).json({
         success: false,
-        error:   'repoId is required',
+        error: 'repoId is required',
       });
     }
 
     const repo = await Repo.findOne({
-      _id:    repoId,
+      _id: repoId,
       userId: req.user.userId,
     });
 
     if (!repo) {
       return res.status(404).json({
         success: false,
-        error:   'Repo not found',
+        error: 'Repo not found',
       });
     }
 
@@ -177,5 +178,53 @@ router.post('/disconnect', async (req, res) => {
     res.status(500).json({ success: false, error: 'Failed to disconnect repo' });
   }
 });
+
+//post /api/repos/:repoId/index
+router.post('/:repoId/index', async (req, res) => {
+  try {
+    const { repoId } = req.params;
+
+    //verify
+    const repo = await Repo.findOne({
+      _id: repoId,
+      userId: req.user.userId,
+      isActive: true,
+    });
+
+    if (!repo) {
+      return res.status(404).json({
+        success: false,
+        error: 'Repo not found',
+      });
+    }
+    console.log(`Indexing requested for repo: ${repo.repoName}`);
+
+    //run indexing pipeline
+    const stats = await indexRepo(
+      repo._id,
+      repo.repoName,
+      req.user.userId,
+    );
+
+    res.json({
+      success: true,
+      message: `Repo indexed successfully`,
+      data: {
+        repoName: repo.repoName,
+        filesProcessed: stats.filesProcessed,
+        chunksIndexed: stats.chunksIndexed,
+      },
+    });
+  }
+  catch (err) {
+    console.error('Error indexing repo:', err.stack || err.message);
+    res.status(500).json({
+      success: false,
+      error: 'Failed to index repo',
+      detail: err.message,       // ← shows real error in response
+    });
+  }
+});
+
 
 export default router;

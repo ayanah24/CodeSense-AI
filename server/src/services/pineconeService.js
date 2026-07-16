@@ -5,7 +5,7 @@ import { generateEmbedding, generateEmbeddings } from './embeddingService.js';
 export async function upsertChunks(repoId, chunks) {
     if (!chunks || chunks.length === 0) {
         console.warn(`upsertChunks: no chunks to upsert for repo ${repoId} — skipping.`);
-        return { total: 0 };
+        return vectors.length;
     }
     try {
         //convert all chunks to vectors
@@ -54,7 +54,7 @@ export async function searchSimilarChunks(repoId, queryText, topK = 5) {
         //extract & format the matches
         const matches = results.matches.map(match => ({
             score: match.score,
-            filepath: match.metadata.filepath,
+            filePath: match.metadata.filePath,
             startLine: match.metadata.startLine,
             endLine: match.metadata.endLine,
             content: match.metadata.content,
@@ -74,7 +74,11 @@ export async function deleteRepoVectors(repoId) {
         await index.namespace(repoId).deleteAll();
         console.log(`Deleted all vectors for repo ${repoId}`);
     } catch (err) {
-        console.error('Error deleting vectors for repo ${repoId}:', err.message);
+        if (err.message && err.message.includes('404')) {
+            console.log(`No namespace found for repo ${repoId} — skipping delete`);
+            return;
+        }
+        console.error(`Error deleting vectors for repo ${repoId}:`, err.message);
         throw err;
     }
 }

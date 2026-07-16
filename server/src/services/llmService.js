@@ -2,9 +2,8 @@ import axios from 'axios';
 import buildPrompt from '../prompt/prompt.js';
 
 // Call Gemini API and get structured review
-async function getCodeReview(prTitle, author, formattedDiff) {
-  const prompt = buildPrompt(prTitle, author, formattedDiff);
-
+async function getCodeReview(prTitle, author, formattedDiff, codebaseContext = []) {
+  const prompt = buildPrompt(prTitle, author, formattedDiff, codebaseContext);
   try {
     const response = await axios.post(
       `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${process.env.GEMINI_API_KEY}`,
@@ -16,7 +15,7 @@ async function getCodeReview(prTitle, author, formattedDiff) {
         ],
         generationConfig: {
           temperature: 0.1, // Low temperature consistent structured output
-         maxOutputTokens: 8192, // Limit response size     
+          maxOutputTokens: 8192, // Limit response size     
         },
       }
     );
