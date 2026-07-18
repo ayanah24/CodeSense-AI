@@ -2,16 +2,28 @@ import { Worker } from 'bullmq';
 import { createRedisConnection } from '../config/redis.js';
 import { fetchPRDiff, postPRComment, setStatusCheck } from '../services/githubService.js';
 import { parseDiff, formatDiffForLLM } from '../services/diffParser.js';
-import { getCodeReview } from '../services/llmService.js';
 import connectMongoDB from '../config/mongodb.js';
 import Review from '../models/Review.js';
 import Repo from '../models/Repo.js';
 import 'dotenv/config';
 import { searchSimilarChunks } from '../services/pineconeService.js';
+import { reviewGraph } from '../agents/graph.js';
 
 await connectMongoDB();
 
 const publisher = createRedisConnection();
+
+function formatRagContext(codebaseContext) {
+  if (!codebaseContext || codebaseContext.length === 0) {
+    return "No relevant context found.";
+  }
+  return codebaseContext
+    .map(
+      (chunk) =>
+        `--- ${chunk.filePath} (lines ${chunk.startLine}-${chunk.endLine}) ---\n${chunk.content}`
+    )
+    .join('\n\n');
+}
 
 const worker = new Worker(
   'code-review',
@@ -79,11 +91,19 @@ const worker = new Worker(
       }
     }
 
-    // Step 4 — Call Gemini API with codebase context
-    console.log('Step 4: Calling Gemini API...');
+    // Step 4 — Run the review graph (classify -> conditional review ->aggregate)
+    console.log('Step 4: Running review graph...');
     await job.updateProgress(60);
-    const review = await getCodeReview(prTitle, author, formattedDiff, codebaseContext);
-    console.log('Review received from Gemini');
+
+    const ragContextString = formatRagContext(codebaseContext);
+
+    const graphResult = await reviewGraph.invoke({
+      diff: formattedDiff,
+      ragContext: ragContextString,
+    });
+
+    const review = graphResult.finalReview;
+    console.log(`Review completed — diffType: ${graphResult.diffType}`);
 
     //Save review to MongoDB
     console.log('Saving review to MongoDB...');
