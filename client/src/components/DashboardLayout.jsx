@@ -36,6 +36,13 @@ const IconRepo = () => (
   </svg>
 );
 
+const IconKey = () => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"
+    strokeLinecap="round" strokeLinejoin="round" style={{ width: 15, height: 15 }}>
+    <path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4" />
+  </svg>
+);
+
 // ── NavLink ──────────────────────────────────────────────────────────────────
 function NavLink({ to, label, icon, exact = false }) {
   const { pathname } = useLocation();
@@ -75,7 +82,7 @@ function Logo() {
         <IconCode />
       </div>
       <span style={{ fontSize: '14px', fontWeight: 600, letterSpacing: '-0.01em', color: '#ffffff' }}>
-         <Link to="/"> CodeSense AI</Link>
+        <Link to="/"> CodeSense AI</Link>
       </span>
     </div>
   );
@@ -150,13 +157,13 @@ function UserPanel() {
           transition: 'background 0.15s, color 0.15s, border-color 0.15s',
         }}
         onMouseEnter={e => {
-          e.currentTarget.style.background  = 'rgba(248,81,73,0.08)';
-          e.currentTarget.style.color       = '#f85149';
+          e.currentTarget.style.background = 'rgba(248,81,73,0.08)';
+          e.currentTarget.style.color = '#f85149';
           e.currentTarget.style.borderColor = 'rgba(248,81,73,0.3)';
         }}
         onMouseLeave={e => {
-          e.currentTarget.style.background  = 'transparent';
-          e.currentTarget.style.color       = 'var(--muted-foreground)';
+          e.currentTarget.style.background = 'transparent';
+          e.currentTarget.style.color = 'var(--muted-foreground)';
           e.currentTarget.style.borderColor = 'var(--border)';
         }}
       >
@@ -180,9 +187,10 @@ export default function DashboardLayout({ children }) {
         <Logo />
 
         <nav style={{ display: 'flex', flexDirection: 'column', gap: 2, padding: '16px 12px' }}>
-          <NavLink to="/dashboard"    label="Dashboard"    icon={<IconDashboard />} exact />
+          <NavLink to="/dashboard" label="Dashboard" icon={<IconDashboard />} exact />
           {/* <NavLink to="`reviews/${id}`"label="Reviews"      icon={<IconReviews />} /> */}
           <NavLink to="/repositories" label="Repositories" icon={<IconRepo />} />
+          <NavLink to="/api-keys" label="API Keys" icon={<IconKey />} />
         </nav>
 
         {/* <div style={{ padding: '12px 16px', fontSize: '12px', color: 'var(--muted-foreground)' }}>

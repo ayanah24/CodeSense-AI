@@ -1,6 +1,5 @@
 import ApiKey from "../models/ApiKey.js";
 import { hashApiKey } from "../utils/apiKey.js";
-import crypto from "crypto";
 
 export async function apiKeyAuth(req, res, next) {
   try {
@@ -21,16 +20,6 @@ export async function apiKeyAuth(req, res, next) {
     const keyDoc = await ApiKey.findOne({ keyHash: incomingHash });
 
     if (!keyDoc || keyDoc.revoked) {
-      return res.status(401).json({ error: "Missing or invalid API key" });
-    }
-
-    //time safe 
-    const storedHashBuffer = Buffer.from(keyDoc.keyHash);
-    const incomingHashBuffer = Buffer.from(incomingHash);
-    if (
-      storedHashBuffer.length !== incomingHashBuffer.length ||
-      !crypto.timingSafeEqual(storedHashBuffer, incomingHashBuffer)
-    ) {
       return res.status(401).json({ error: "Missing or invalid API key" });
     }
 

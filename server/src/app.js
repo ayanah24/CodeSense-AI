@@ -1,6 +1,8 @@
 import 'dotenv/config';
 import express from 'express';
 import cors from 'cors';
+import helmet from 'helmet';
+import rateLimit from 'express-rate-limit';
 import cookieParser from 'cookie-parser';
 import passport, { initPassport } from './config/passport.js';
 import { createServer } from 'http';
@@ -37,6 +39,8 @@ try {
 }
 
 //  MIDDLEWARE
+app.use(helmet());
+
 app.use(cors({
   origin: process.env.CLIENT_URL,
   credentials: true,
@@ -73,13 +77,20 @@ app.get('/api/test-embedding', async (req, res) => {
   }
 });
 
-// API KEY ROUTES (public, no auth needed)
+//API key management (JWT-protected inside the router)
 app.use("/api/keys", apiKeyRoutes);
 
-// Review API (protected by API key)
-app.use("/api/v1/review", reviewApiRoutes);
+// Review API (protected by API key) — rate-limited to prevent auth brute-force
+const apiKeyAuthLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 100,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { error: "Too many requests. Please try again later." },
+});
+app.use("/api/v1/review", apiKeyAuthLimiter, reviewApiRoutes);
 
-// ── Health check — tests all upstream services ──────────────────────────────
+// Health check
 app.get('/api/health', async (req, res) => {
   const checks = {};
 

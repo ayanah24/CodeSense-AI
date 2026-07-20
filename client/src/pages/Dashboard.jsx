@@ -6,24 +6,24 @@ import { useSocket } from '../hooks/useSocket.js';
 
 function timeAgo(dateStr) {
   if (!dateStr) return '';
-  const diff  = Date.now() - new Date(dateStr).getTime();
+  const diff = Date.now() - new Date(dateStr).getTime();
   const hours = Math.floor(diff / 3600000);
-  const days  = Math.floor(hours / 24);
-  if (days  > 0) return `${days} day${days  > 1 ? 's' : ''} ago`;
+  const days = Math.floor(hours / 24);
+  if (days > 0) return `${days} day${days > 1 ? 's' : ''} ago`;
   if (hours > 0) return `${hours} hour${hours > 1 ? 's' : ''} ago`;
   return 'just now';
 }
 
 export default function Dashboard() {
   const [reviews, setReviews] = useState([]);
-  const [stats,   setStats]   = useState(null);
+  const [stats, setStats] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [error,   setError]   = useState(null);
+  const [error, setError] = useState(null);
 
-  // ── Socket ──────────────────────────────────────────────────────────────
+  //  Socket
   const { connected, on, off } = useSocket();
 
-  // ── Load Data ────────────────────────────────────────────────────────────
+  //  Load Data
   useEffect(() => {
     async function load() {
       try {
@@ -42,10 +42,9 @@ export default function Dashboard() {
     load();
   }, []);
 
-  // ── Real-time handler ────────────────────────────────────────────────────
-  // useCallback — har render pe naya function mat banao
+  //  Real-time handler
   const handleNewReview = useCallback((newReview) => {
-    console.log('📨 New review received via socket:', newReview);
+    console.log('New review received via socket:', newReview);
 
     // Naya review top pe add karo
     setReviews(prev => [newReview, ...prev]);
@@ -67,11 +66,10 @@ export default function Dashboard() {
 
   }, []);
 
-  // ── Socket Event Listener ─────────────────────────────────────────────────
+  //Socket Event Listener
   useEffect(() => {
     on('review:complete', handleNewReview);
 
-    // Cleanup — component unmount pe event listener hatao
     return () => {
       off('review:complete', handleNewReview);
     };
@@ -89,10 +87,10 @@ export default function Dashboard() {
           {/* Live indicator */}
           <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
             <span style={{
-              width:        7, height: 7,
+              width: 7, height: 7,
               borderRadius: '50%',
-              background:   connected ? '#22c55e' : '#f85149',
-              display:      'inline-block',
+              background: connected ? '#22c55e' : '#f85149',
+              display: 'inline-block',
             }} />
             <span style={{ fontSize: 11, color: connected ? '#22c55e' : '#f85149', fontWeight: 500 }}>
               {connected ? 'Live' : 'Offline'}
@@ -110,15 +108,15 @@ export default function Dashboard() {
             {[
               { label: 'Total Reviews', value: stats.totalReviews },
               { label: 'Average Score', value: stats.avgScore },
-              { label: 'Passed',        value: stats.passedReview, color: 'var(--success)' },
-              { label: 'Failed',        value: stats.failedReview, color: 'var(--danger)'  },
+              { label: 'Passed', value: stats.passedReview, color: 'var(--success)' },
+              { label: 'Failed', value: stats.failedReview, color: 'var(--danger)' },
             ].map(s => (
               <div key={s.label} style={{
                 borderRadius: 10,
-                border:       '1px solid var(--border)',
-                background:   'var(--card)',
-                padding:      '16px 20px',
-                transition:   'border-color 0.3s',
+                border: '1px solid var(--border)',
+                background: 'var(--card)',
+                padding: '16px 20px',
+                transition: 'border-color 0.3s',
               }}>
                 <div style={{ fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.07em', color: 'var(--muted-foreground)', marginBottom: 8 }}>
                   {s.label}
@@ -186,7 +184,7 @@ export default function Dashboard() {
                     borderRadius: 999, padding: '4px 10px',
                     fontSize: 12, fontWeight: 600,
                     background: passed ? 'rgba(63,185,80,0.15)' : 'rgba(248,81,73,0.15)',
-                    color:      passed ? 'var(--success)' : 'var(--danger)',
+                    color: passed ? 'var(--success)' : 'var(--danger)',
                   }}>
                     {r.score?.overall}
                   </span>
@@ -194,7 +192,7 @@ export default function Dashboard() {
                     borderRadius: 6, padding: '2px 8px',
                     fontSize: 10, fontWeight: 700, textTransform: 'uppercase',
                     border: `1px solid ${passed ? 'rgba(63,185,80,0.4)' : 'rgba(248,81,73,0.4)'}`,
-                    color:  passed ? 'var(--success)' : 'var(--danger)',
+                    color: passed ? 'var(--success)' : 'var(--danger)',
                   }}>
                     {passed ? 'Pass' : 'Fail'}
                   </span>

@@ -2,12 +2,14 @@ import { Link } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 
 const features = [
-  { icon: '🐞', title: 'Bug Detection',         desc: 'Catches logic errors, null derefs, and off-by-ones before review.' },
-  { icon: '🛡️', title: 'Security Scanning',     desc: 'Flags injection, auth gaps, and unsafe patterns by default.' },
-  { icon: '⚡', title: 'Performance Analysis',  desc: 'Spots N+1 queries, blocking I/O, and inefficient algorithms.' },
-  { icon: '✨', title: 'Code Quality',           desc: 'Enforces conventions, surfaces dead code, and recommends refactors.' },
-  { icon: '🔒', title: 'Merge Gate Protection', desc: 'Block PRs below your score threshold from being merged.' },
-  { icon: '📊', title: 'Real-time Dashboard',   desc: 'See every review across every repo in one organized view.' },
+  { icon: '🧠', title: 'Multi-Agent Review Pipeline', desc: 'Diffs are classified, then routed to specialized security, logic, and style agents that review in parallel — not a single generic LLM call.' },
+  { icon: '📊', title: '4-Dimension Scoring',          desc: 'Every review scores Security, Performance, Quality, and Tests independently, plus an overall 0–100 score with pass/fail.' },
+  { icon: '🔍', title: 'RAG-Enhanced Context',         desc: 'Your codebase is indexed into a vector store so the AI understands existing patterns, not just the diff in isolation.' },
+  { icon: '⚡', title: 'Real-Time Dashboard',           desc: 'Reviews land on your dashboard the instant they finish via WebSocket — no refresh needed.' },
+  { icon: '📋', title: 'Manual Code Review',           desc: 'Paste any snippet — no repo needed. Get a full AI review with scores and actionable fixes in seconds.' },
+  { icon: '🔗', title: 'CI/CD API Keys',               desc: 'Generate API keys and trigger reviews from any pipeline. Submit a diff, get back a scored review — fully async.' },
+  { icon: '🔒', title: 'Merge Gate Protection',        desc: 'GitHub commit status checks automatically block PRs that score below your threshold from merging.' },
+  { icon: '💬', title: 'GitHub PR Comments',            desc: 'Formatted Markdown review with severity badges and fix suggestions posted directly on your pull request.' },
 ];
 
 const API = import.meta.env.VITE_API_URL || 'http://localhost:3000';
@@ -97,6 +99,12 @@ export default function Landing() {
                 {label}
               </a>
             ))}
+            <Link to="/manual" style={{ fontSize: '14px', fontWeight: 500, color: '#7c3aed', textDecoration: 'none', transition: 'color 0.15s' }}
+              onMouseEnter={e => e.target.style.color = '#6d28d9'}
+              onMouseLeave={e => e.target.style.color = '#7c3aed'}
+            >
+              Manual Review
+            </Link>
           </nav>
 
           {/* Navbar right — shows login or avatar+logout */}
@@ -220,6 +228,56 @@ export default function Landing() {
               Start Reviewing for Free <ArrowRight />
             </button>
           )}
+
+          {/* Built with Logos Row */}
+          <div style={{ marginTop: 52, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 14 }}>
+            <p style={{ fontSize: '11.5px', fontWeight: 600, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.08em', margin: 0 }}>Built with</p>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 16, flexWrap: 'nowrap' }}>
+              {[
+                { icon: '🦙', text: 'LangGraph Agents' },
+                { icon: '✦', text: 'Gemini 2.5 Flash' },
+                { icon: '🤖', text: 'Groq Llama-3.3' },
+                { icon: '🌲', text: 'Pinecone RAG' },
+                { icon: '⚡', text: 'BullMQ + Redis' },
+              ].map((item, idx) => (
+                <span
+                  key={idx}
+                  style={{
+                    fontSize: '14px',
+                    fontWeight: 600,
+                    color: '#475569',
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: 8,
+                    padding: '6px 14px',
+                    borderRadius: '999px',
+                    background: 'rgba(248, 250, 252, 0.6)',
+                    border: '1px solid rgba(226, 232, 240, 0.9)',
+                    transition: 'all 0.25s cubic-bezier(0.4, 0, 0.2, 1)',
+                    cursor: 'default',
+                    userSelect: 'none',
+                  }}
+                  onMouseEnter={e => {
+                    e.currentTarget.style.transform = 'translateY(-2px) scale(1.03)';
+                    e.currentTarget.style.color = '#7c3aed';
+                    e.currentTarget.style.borderColor = 'rgba(124, 58, 237, 0.2)';
+                    e.currentTarget.style.background = 'rgba(124, 58, 237, 0.04)';
+                    e.currentTarget.style.boxShadow = '0 6px 16px rgba(124, 58, 237, 0.08)';
+                  }}
+                  onMouseLeave={e => {
+                    e.currentTarget.style.transform = 'translateY(0) scale(1)';
+                    e.currentTarget.style.color = '#475569';
+                    e.currentTarget.style.borderColor = 'rgba(226, 232, 240, 0.9)';
+                    e.currentTarget.style.background = 'rgba(248, 250, 252, 0.6)';
+                    e.currentTarget.style.boxShadow = 'none';
+                  }}
+                >
+                  <span style={{ fontSize: '18px' }}>{item.icon}</span>
+                  {item.text}
+                </span>
+              ))}
+            </div>
+          </div>
         </div>
       </section>
 
@@ -231,13 +289,14 @@ export default function Landing() {
             <h2 style={{ fontSize: 'clamp(26px, 4vw, 38px)', fontWeight: 700, color: '#0f0f0f', letterSpacing: '-0.02em', marginBottom: 10 }}>
               How it works
             </h2>
-            <p style={{ fontSize: '15px', color: '#64748b' }}>Three steps from install to your first review.</p>
+            <p style={{ fontSize: '15px', color: '#64748b' }}>Four steps from sign-in to AI-reviewed code.</p>
           </div>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: 16 }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(210px, 1fr))', gap: 16 }}>
             {[
-              { n: 1, title: 'Connect your GitHub repo',  desc: 'Install the GitHub app and pick the repositories you want reviewed.' },
-              { n: 2, title: 'Open a Pull Request',        desc: 'Push code and open a PR like you normally would — no extra commands.' },
-              { n: 3, title: 'Get instant AI review',      desc: 'A detailed review appears within seconds, with severity-tagged findings.' },
+              { n: 1, title: 'Sign in & connect repos',        desc: 'One-click GitHub OAuth login, then pick the repos you want reviewed — we register webhooks automatically.' },
+              { n: 2, title: 'Index your codebase',             desc: 'We chunk and embed your repo into a vector store so the AI has full context, not just the raw diff.' },
+              { n: 3, title: 'Push a PR or paste code',         desc: 'Open a pull request for automatic queue-based review, or paste any snippet into the manual editor.' },
+              { n: 4, title: 'Multi-agent review in seconds',   desc: 'Specialized agents score security, logic, and style in parallel. Results land on your dashboard and PR in real time.' },
             ].map((s) => (
               <div key={s.n}
                 style={{ background: '#ffffff', border: '1px solid #e2e8f0', borderRadius: 14, padding: '24px', transition: 'box-shadow 0.2s' }}
@@ -260,9 +319,9 @@ export default function Landing() {
         <div style={{ maxWidth: 1000, margin: '0 auto' }}>
           <div style={{ textAlign: 'center', marginBottom: 52 }}>
             <h2 style={{ fontSize: 'clamp(26px, 4vw, 38px)', fontWeight: 700, color: '#0f0f0f', letterSpacing: '-0.02em', marginBottom: 10 }}>
-              Everything in one review
+              Everything you need to ship safer code
             </h2>
-            <p style={{ fontSize: '15px', color: '#64748b' }}>Six analyzers running in parallel on every pull request.</p>
+            <p style={{ fontSize: '15px', color: '#64748b' }}>A multi-agent pipeline, RAG-powered context, and real-time results — from PR webhooks to CI/CD API.</p>
           </div>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 14 }}>
             {features.map((f) => (
