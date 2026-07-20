@@ -18,6 +18,8 @@ import { authMiddleware } from './middleware/authMiddleware.js';
 
 import repoRoutes from './routes/repoRoutes.js';
 import { generateEmbedding } from './services/embeddingService.js';
+import reviewApiRoutes from "./routes/reviewApiRoutes.js";
+import apiKeyRoutes from "./routes/apiKeyRoutes.js";
 
 initPassport(); // must run after dotenv.config() so env vars are available
 
@@ -70,6 +72,13 @@ app.get('/api/test-embedding', async (req, res) => {
     res.status(500).json({ success: false, error: err.message });
   }
 });
+
+// API KEY ROUTES (public, no auth needed)
+app.use("/api/keys", apiKeyRoutes);
+
+// Review API (protected by API key)
+app.use("/api/v1/review", reviewApiRoutes);
+
 // ── Health check — tests all upstream services ──────────────────────────────
 app.get('/api/health', async (req, res) => {
   const checks = {};

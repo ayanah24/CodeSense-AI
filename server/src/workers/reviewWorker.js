@@ -29,7 +29,7 @@ const worker = new Worker(
   'code-review',
 
   async (job) => {
-    const { prNumber, prTitle, author, diffUrl, repoName, commitSha } = job.data;
+    const { prNumber, prTitle, author, diffUrl, repoName, commitSha, source, diff: providedDiff } = job.data;
 
     console.log(`\n=============================`);
     console.log(`Worker picked job: ${job.id}`);
@@ -38,10 +38,18 @@ const worker = new Worker(
     console.log(`=============================\n`);
 
     // Step 1 — Fetch raw diff from GitHub
-    console.log('Step 1: Fetching diff from GitHub...');
+    console.log('Step 1: Getting diff...');
     await job.updateProgress(10);
-    const rawDiff = await fetchPRDiff(diffUrl);
-    console.log('Diff fetched successfully');
+
+    let rawDiff;
+    if (source === 'api' && providedDiff) {
+      console.log('Using diff provided directly via API');
+      rawDiff = providedDiff;
+    } else {
+      console.log('Fetching diff from GitHub...');
+      rawDiff = await fetchPRDiff(diffUrl);
+    }
+    console.log('Diff ready');
 
     // Step 2 — Parse diff into clean format
     console.log('Step 2: Parsing diff...');
@@ -108,18 +116,19 @@ const worker = new Worker(
     //Save review to MongoDB
     console.log('Saving review to MongoDB...');
     const savedReview = await Review.create({
-      userId: repo ? repo.userId : undefined,
-      prNumber,
-      prTitle,
-      author,
-      repoName,
-      commitSha,
+      userId: source === 'api' ? job.data.userId : (repo ? repo.userId : undefined),
+      prNumber: source === 'api' ? 0 : prNumber,
+      prTitle: source === 'api' ? (repoName || 'API Review') : prTitle,
+      author: source === 'api' ? 'api' : author,
+      repoName: source === 'api' ? (repoName || 'N/A') : repoName,
+      commitSha: source === 'api' ? 'N/A' : commitSha,
       summary: review.summary,
       score: review.score,
       issues: review.issues,
       positives: review.positives,
       status: 'reviewed',
       passed: review.score.overall >= 70,
+      jobId: job.id,
     });
     console.log(`Review saved to MongoDB — ID: ${savedReview._id}`);
 
@@ -147,13 +156,22 @@ const worker = new Worker(
     //step 5 - post comment on github pr
     console.log('Step 5: Posting review comment on GitHub...');
     await job.updateProgress(75);
-    await postPRComment(repoName, prNumber, review);
-    console.log('Review comment posted successfully');
+    if (source !== 'api') {
+      await postPRComment(repoName, prNumber, review);
+      console.log('Review comment posted successfully');
+    } else {
+      console.log('API-triggered job — skipping GitHub comment');
+    }
 
     //step 6 - set merge gate status check
     console.log('Step 6: Setting merge gate status check...');
     await job.updateProgress(90);
-    await setStatusCheck(repoName, commitSha, review.score.overall);
+    if (source !== 'api') {
+      await setStatusCheck(repoName, commitSha, review.score.overall);
+      console.log('Status check set');
+    } else {
+      console.log('API-triggered job — skipping GitHub status check');
+    }
 
     //print review summary and scores to console
     await job.updateProgress(100);
