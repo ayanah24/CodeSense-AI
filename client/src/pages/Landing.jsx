@@ -3,13 +3,13 @@ import { useEffect, useState } from 'react';
 
 const features = [
   { icon: '🧠', title: 'Multi-Agent Review Pipeline', desc: 'Diffs are classified, then routed to specialized security, logic, and style agents that review in parallel — not a single generic LLM call.' },
-  { icon: '📊', title: '4-Dimension Scoring',          desc: 'Every review scores Security, Performance, Quality, and Tests independently, plus an overall 0–100 score with pass/fail.' },
-  { icon: '🔍', title: 'RAG-Enhanced Context',         desc: 'Your codebase is indexed into a vector store so the AI understands existing patterns, not just the diff in isolation.' },
-  { icon: '⚡', title: 'Real-Time Dashboard',           desc: 'Reviews land on your dashboard the instant they finish via WebSocket — no refresh needed.' },
-  { icon: '📋', title: 'Manual Code Review',           desc: 'Paste any snippet — no repo needed. Get a full AI review with scores and actionable fixes in seconds.' },
-  { icon: '🔗', title: 'CI/CD API Keys',               desc: 'Generate API keys and trigger reviews from any pipeline. Submit a diff, get back a scored review — fully async.' },
-  { icon: '🔒', title: 'Merge Gate Protection',        desc: 'GitHub commit status checks automatically block PRs that score below your threshold from merging.' },
-  { icon: '💬', title: 'GitHub PR Comments',            desc: 'Formatted Markdown review with severity badges and fix suggestions posted directly on your pull request.' },
+  { icon: '📊', title: '4-Dimension Scoring', desc: 'Every review scores Security, Performance, Quality, and Tests independently, plus an overall 0–100 score with pass/fail.' },
+  { icon: '🔍', title: 'RAG-Enhanced Context', desc: 'Your codebase is indexed into a vector store so the AI understands existing patterns, not just the diff in isolation.' },
+  { icon: '⚡', title: 'Real-Time Dashboard', desc: 'Reviews land on your dashboard the instant they finish via WebSocket — no refresh needed.' },
+  { icon: '📋', title: 'Manual Code Review', desc: 'Paste any snippet — no repo needed. Get a full AI review with scores and actionable fixes in seconds.' },
+  { icon: '🔗', title: 'CI/CD API Keys', desc: 'Generate API keys and trigger reviews from any pipeline. Submit a diff, get back a scored review — fully async.' },
+  { icon: '🔒', title: 'Merge Gate Protection', desc: 'GitHub commit status checks automatically block PRs that score below your threshold from merging.' },
+  { icon: '💬', title: 'GitHub PR Comments', desc: 'Formatted Markdown review with severity badges and fix suggestions posted directly on your pull request.' },
 ];
 
 const API = import.meta.env.VITE_API_URL || 'http://localhost:3000';
@@ -281,7 +281,6 @@ export default function Landing() {
         </div>
       </section>
 
-      {/* rest of your sections stay exactly the same */}
       {/*  How it works */}
       <section id="how" style={{ borderTop: '1px solid #f1f5f9', background: 'rgba(248,250,252,0.6)', padding: '80px 24px' }}>
         <div style={{ maxWidth: 1000, margin: '0 auto' }}>
@@ -293,10 +292,10 @@ export default function Landing() {
           </div>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(210px, 1fr))', gap: 16 }}>
             {[
-              { n: 1, title: 'Sign in & connect repos',        desc: 'One-click GitHub OAuth login, then pick the repos you want reviewed — we register webhooks automatically.' },
-              { n: 2, title: 'Index your codebase',             desc: 'We chunk and embed your repo into a vector store so the AI has full context, not just the raw diff.' },
-              { n: 3, title: 'Push a PR or paste code',         desc: 'Open a pull request for automatic queue-based review, or paste any snippet into the manual editor.' },
-              { n: 4, title: 'Multi-agent review in seconds',   desc: 'Specialized agents score security, logic, and style in parallel. Results land on your dashboard and PR in real time.' },
+              { n: 1, title: 'Sign in & connect repos', desc: 'One-click GitHub OAuth login, then pick the repos you want reviewed — we register webhooks automatically.' },
+              { n: 2, title: 'Index your codebase', desc: 'We chunk and embed your repo into a vector store so the AI has full context, not just the raw diff.' },
+              { n: 3, title: 'Push a PR or paste code', desc: 'Open a pull request for automatic queue-based review, or paste any snippet into the manual editor.' },
+              { n: 4, title: 'Multi-agent review in seconds', desc: 'Specialized agents score security, logic, and style in parallel. Results land on your dashboard and PR in real time.' },
             ].map((s) => (
               <div key={s.n}
                 style={{ background: '#ffffff', border: '1px solid #e2e8f0', borderRadius: 14, padding: '24px', transition: 'box-shadow 0.2s' }}
@@ -339,7 +338,7 @@ export default function Landing() {
         </div>
       </section>
 
-      {/* Manual Review callout — unchanged */}
+      {/* Manual Review callout */}
       <section id="try-free" style={{ borderTop: '1px solid #f1f5f9', padding: '80px 24px', background: '#ffffff' }}>
         <div style={{ maxWidth: 1000, margin: '0 auto', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: 48, alignItems: 'center' }}>
           <div>

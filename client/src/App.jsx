@@ -25,11 +25,7 @@ export default function App() {
               <ReviewDetail />
             </ProtectedRoute>
           } />
-          <Route path='/manual' element={
-            <ProtectedRoute>
-              <ManualReview />
-            </ProtectedRoute>
-          } />
+          <Route path='/manual' element={<ManualReview />} />
           <Route path="/repositories" element={
             <ProtectedRoute><Repositories /></ProtectedRoute>
           } />

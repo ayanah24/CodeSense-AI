@@ -135,4 +135,32 @@ async function getStats(req,res) {
     }
 }
 
-export {getAllReviews,getReviewsById,getReviewsByRepo,getStats};
+// delete api/reviews/:id
+async function deleteReviewById(req, res) {
+    try {
+        const review = await Review.findOneAndDelete({
+            _id: req.params.id,
+            userId: req.user.userId,
+        });
+
+        if (!review) {
+            return res.status(404).json({
+                success: false,
+                error: 'Review not found',
+            });
+        }
+
+        res.json({
+            success: true,
+            message: 'Review deleted successfully',
+        });
+    } catch (error) {
+        console.error('Error deleting review:', error.message);
+        res.status(500).json({
+            success: false,
+            error: 'Failed to delete review',
+        });
+    }
+}
+
+export {getAllReviews,getReviewsById,getReviewsByRepo,getStats,deleteReviewById};

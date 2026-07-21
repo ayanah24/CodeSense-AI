@@ -23,7 +23,7 @@ import { generateEmbedding } from './services/embeddingService.js';
 import reviewApiRoutes from "./routes/reviewApiRoutes.js";
 import apiKeyRoutes from "./routes/apiKeyRoutes.js";
 
-initPassport(); // must run after dotenv.config() so env vars are available
+initPassport();
 
 const app = express();
 

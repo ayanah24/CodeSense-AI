@@ -34,3 +34,9 @@ export async function manualReview(code, language) {
   });
   return res.data.data;
 }
+
+// delete a review by ID
+export async function deleteReview(id) {
+  const res = await api.delete(`${API_BASE}/reviews/${id}`);
+  return res.data;
+}
