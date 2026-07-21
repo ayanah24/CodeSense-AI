@@ -4,16 +4,16 @@ import DashboardLayout from '../components/DashboardLayout.jsx';
 import { fetchReviewById } from '../api/reviews.js';
 
 const SEVERITY = {
-  CRITICAL:   { bg: 'rgba(248,81,73,0.12)',  text: 'var(--danger)',  border: 'rgba(248,81,73,0.4)' },
-  WARNING:    { bg: 'rgba(210,153,34,0.12)', text: 'var(--warning)', border: 'rgba(210,153,34,0.4)' },
-  SUGGESTION: { bg: 'rgba(88,166,255,0.12)', text: 'var(--info)',    border: 'rgba(88,166,255,0.4)' },
+  CRITICAL: { bg: 'rgba(248,81,73,0.12)', text: 'var(--danger)', border: 'rgba(248,81,73,0.4)' },
+  WARNING: { bg: 'rgba(210,153,34,0.12)', text: 'var(--warning)', border: 'rgba(210,153,34,0.4)' },
+  SUGGESTION: { bg: 'rgba(88,166,255,0.12)', text: 'var(--info)', border: 'rgba(88,166,255,0.4)' },
 };
 
 export default function ReviewDetail() {
   const { id } = useParams();
-  const [review,  setReview]  = useState(null);
+  const [review, setReview] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [error,   setError]   = useState(null);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     fetchReviewById(id)
@@ -23,7 +23,7 @@ export default function ReviewDetail() {
   }, [id]);
 
   if (loading) return <DashboardLayout><p style={{ padding: 40, color: 'var(--muted-foreground)' }}>Loading…</p></DashboardLayout>;
-  if (error)   return <DashboardLayout><p style={{ padding: 40, color: 'var(--danger)' }}>{error}</p></DashboardLayout>;
+  if (error) return <DashboardLayout><p style={{ padding: 40, color: 'var(--danger)' }}>{error}</p></DashboardLayout>;
 
   const passed = review.passed;
   const scoreColor = passed ? 'var(--success)' : 'var(--danger)';
@@ -45,13 +45,13 @@ export default function ReviewDetail() {
         </div>
 
         {/* Score panel */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'auto 1fr', gap: 16, marginBottom: 24 }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(160px,100%), 1fr))', gap: 16, marginBottom: 24, alignItems: 'start' }}>
           <div style={{ borderRadius: 14, border: `2px solid ${passed ? 'rgba(63,185,80,0.5)' : 'rgba(248,81,73,0.5)'}`, background: 'var(--card)', padding: '24px 32px', textAlign: 'center' }}>
             <div style={{ fontSize: 11, color: 'var(--muted-foreground)', marginBottom: 4 }}>Overall</div>
             <div style={{ fontSize: 52, fontWeight: 700, color: scoreColor }}>{review.score?.overall}</div>
             <div style={{ fontSize: 10, fontWeight: 700, textTransform: 'uppercase', color: scoreColor, marginTop: 6 }}>{passed ? 'Pass' : 'Fail'}</div>
           </div>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(120px,1fr))', gap: 10 }}>
             {[['Security', review.score?.security], ['Performance', review.score?.performance], ['Quality', review.score?.quality], ['Tests', review.score?.tests]].map(([label, val]) => (
               <div key={label} style={{ borderRadius: 10, border: '1px solid var(--border)', background: 'var(--card)', padding: '14px 18px' }}>
                 <div style={{ fontSize: 11, color: 'var(--muted-foreground)', marginBottom: 6 }}>{label}</div>

@@ -23,6 +23,9 @@
 
   /* Typography */
   --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif;
+
+  /* Sidebar */
+  --sidebar-width: 224px;
 }
 
 /* ── Base ───────────────────────────────────────────────────────────────── */
@@ -35,11 +38,18 @@
   border-color: var(--border);
 }
 
+html {
+  /* Prevent font size inflation on iOS */
+  -webkit-text-size-adjust: 100%;
+}
+
 body {
   font-family: var(--font-sans);
   background-color: #ffffff;
   color: #0f0f0f;
   -webkit-font-smoothing: antialiased;
+  /* Prevent horizontal scroll globally */
+  overflow-x: hidden;
 }
 
 /* ── Landing gradient text ──────────────────────────────────────────────── */
@@ -163,4 +173,200 @@ body {
 
 .border-border {
   border-color: var(--border);
+}
+
+/* ── Responsive Utilities ───────────────────────────────────────────────── */
+
+/* Auto-fit grids */
+.grid-auto-4 {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+}
+
+.grid-auto-2 {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+}
+
+/* Sidebar drawer animations */
+@keyframes sidebarSlideIn {
+  from { transform: translateX(-100%); }
+  to   { transform: translateX(0); }
+}
+
+@keyframes sidebarSlideOut {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-100%); }
+}
+
+@keyframes overlayFadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+/* Mobile nav drawer */
+.mobile-nav-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.55);
+  backdrop-filter: blur(4px);
+  z-index: 40;
+  animation: overlayFadeIn 0.2s ease;
+}
+
+/* ── Breakpoints ────────────────────────────────────────────────────────── */
+
+/* Tablet and below (≤ 1023px) */
+@media (max-width: 1023px) {
+  .grid-auto-4 {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* Mobile (≤ 767px) */
+@media (max-width: 767px) {
+  .grid-auto-4 {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .grid-auto-2 {
+    grid-template-columns: 1fr;
+  }
+
+  /* Dashboard sidebar hidden off-screen by default on mobile */
+  .dashboard-sidebar {
+    position: fixed !important;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    z-index: 50;
+    transform: translateX(-100%);
+    transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 4px 0 24px rgba(0, 0, 0, 0.4);
+  }
+
+  .dashboard-sidebar.is-open {
+    transform: translateX(0);
+  }
+
+  /* Top bar shown on mobile */
+  .dashboard-topbar {
+    display: flex !important;
+  }
+
+  /* Main content fills full width on mobile */
+  .dashboard-main {
+    margin-left: 0 !important;
+    width: 100% !important;
+  }
+}
+
+/* Small mobile (≤ 479px) */
+@media (max-width: 479px) {
+  .grid-auto-4 {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+/* ── Dashboard top-bar (mobile only) ───────────────────────────────────── */
+.dashboard-topbar {
+  display: none;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 16px;
+  height: 52px;
+  background: #0a0d12;
+  border-bottom: 1px solid var(--border);
+  position: sticky;
+  top: 0;
+  z-index: 30;
+}
+
+/* Hamburger button */
+.hamburger-btn {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 5px;
+  width: 36px;
+  height: 36px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 6px;
+  transition: background 0.15s;
+}
+
+.hamburger-btn:hover {
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.hamburger-btn span {
+  display: block;
+  width: 20px;
+  height: 2px;
+  background: #8b949e;
+  border-radius: 2px;
+  transition: background 0.15s;
+}
+
+.hamburger-btn:hover span {
+  background: #ffffff;
+}
+
+/* ── Landing responsive tweaks ──────────────────────────────────────────── */
+@media (max-width: 767px) {
+  .landing-nav-links {
+    display: none;
+  }
+
+  .landing-nav-links.is-open {
+    display: flex;
+    flex-direction: column;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(255, 255, 255, 0.97);
+    backdrop-filter: blur(8px);
+    z-index: 100;
+    align-items: center;
+    justify-content: center;
+    gap: 32px;
+    animation: overlayFadeIn 0.2s ease;
+  }
+
+  .landing-hamburger {
+    display: flex !important;
+  }
+}
+
+.landing-hamburger {
+  display: none;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 5px;
+  width: 36px;
+  height: 36px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 6px;
+  transition: background 0.15s;
+}
+
+.landing-hamburger span {
+  display: block;
+  width: 20px;
+  height: 2px;
+  background: #374151;
+  border-radius: 2px;
+  transition: all 0.2s;
 }

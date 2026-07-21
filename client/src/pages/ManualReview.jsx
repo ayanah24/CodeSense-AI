@@ -133,6 +133,7 @@ export default function ManualReview() {
           {/* Toolbar */}
           <div style={{
             display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+            flexWrap: 'wrap', gap: 8,
             padding: '10px 16px',
             borderBottom: '1px solid var(--border)',
             background: '#0d1117',
@@ -192,7 +193,7 @@ export default function ManualReview() {
 
           {/* Monaco Editor */}
           <Editor
-            height="360px"
+            height="clamp(220px, 40vh, 360px)"
             language={lang}
             value={code}
             onChange={val => setCode(val || '')}
@@ -283,7 +284,7 @@ export default function ManualReview() {
               </div>
 
               {/* Sub-scores */}
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 12 }}>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(120px, 1fr))', gap: 12 }}>
                 <ScoreCell label="Security"    value={review.score.security}    />
                 <ScoreCell label="Performance" value={review.score.performance} />
                 <ScoreCell label="Quality"     value={review.score.quality}     />

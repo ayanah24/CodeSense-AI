@@ -51,10 +51,10 @@ function KeyCard({ apiKey, onRevoke }) {
             onMouseEnter={e => { if (!isRevoked) e.currentTarget.style.borderColor = '#7c3aed'; }}
             onMouseLeave={e => e.currentTarget.style.borderColor = '#30363d'}
         >
-            <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 16 }}>
+            <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between', gap: 16 }}>
 
                 {/* Key info */}
-                <div style={{ display: 'flex', alignItems: 'center', gap: 12, minWidth: 0 }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 12, minWidth: 0, flex: '1 1 300px' }}>
                     <div style={{
                         width: 36, height: 36,
                         background: 'rgba(124,58,237,0.12)',
@@ -67,8 +67,8 @@ function KeyCard({ apiKey, onRevoke }) {
                     }}>
                         <IconKey />
                     </div>
-                    <div style={{ minWidth: 0 }}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                    <div style={{ minWidth: 0, flex: 1 }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
                             <span style={{
                                 fontSize: 14,
                                 fontWeight: 600,
@@ -93,7 +93,7 @@ function KeyCard({ apiKey, onRevoke }) {
                                 </span>
                             )}
                         </div>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginTop: 4 }}>
+                        <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: '6px 12px', marginTop: 4 }}>
                             <code style={{
                                 fontSize: 11,
                                 color: '#8b949e',
@@ -185,6 +185,8 @@ export default function ApiKeys() {
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'space-between',
+                    flexWrap: 'wrap',
+                    gap: 16,
                     marginBottom: 32,
                 }}>
                     <div>

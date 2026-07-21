@@ -119,7 +119,7 @@ export default function AddRepoModal({ onClose, onRepoConnected }) {
         display:         'flex',
         alignItems:      'center',
         justifyContent:  'center',
-        padding:         '24px',
+        padding:         'clamp(8px, 3vw, 24px)',
       }}
     >
       {/* Modal */}
@@ -129,7 +129,7 @@ export default function AddRepoModal({ onClose, onRepoConnected }) {
         borderRadius: 14,
         width:        '100%',
         maxWidth:     560,
-        maxHeight:    '80vh',
+        maxHeight:    '90vh',
         display:      'flex',
         flexDirection:'column',
         overflow:     'hidden',

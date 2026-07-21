@@ -98,7 +98,7 @@ export default function GenerateKeyModal({ onClose, onKeyGenerated }) {
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                padding: '24px',
+                padding: 'clamp(8px, 3vw, 24px)',
             }}
         >
             {/* Modal */}
@@ -108,6 +108,7 @@ export default function GenerateKeyModal({ onClose, onKeyGenerated }) {
                 borderRadius: 14,
                 width: '100%',
                 maxWidth: 480,
+                maxHeight: '90vh',
                 display: 'flex',
                 flexDirection: 'column',
                 overflow: 'hidden',

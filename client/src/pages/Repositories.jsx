@@ -61,10 +61,10 @@ function RepoCard({ repo, onDisconnect }) {
       onMouseLeave={e => e.currentTarget.style.borderColor = '#30363d'}
     >
       {/* Top row */}
-      <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 16 }}>
+      <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between', gap: 16 }}>
 
         {/* Repo info */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: 12, minWidth: 0 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 12, minWidth: 0, flex: '1 1 300px' }}>
           <div style={{
             width:        36, height: 36,
             background:   'rgba(124,58,237,0.12)',
@@ -77,8 +77,8 @@ function RepoCard({ repo, onDisconnect }) {
           }}>
             <IconRepo />
           </div>
-          <div style={{ minWidth: 0 }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+          <div style={{ minWidth: 0, flex: 1 }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
               <span style={{ fontSize: 12, color: '#8b949e' }}>{repoOwner}/</span>
               <span style={{
                 fontSize:     14,
@@ -91,7 +91,7 @@ function RepoCard({ repo, onDisconnect }) {
                 {repoShortName}
               </span>
             </div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginTop: 4 }}>
+            <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: '6px 12px', marginTop: 4 }}>
               {/* Webhook active badge */}
               <span style={{
                 display:      'inline-flex',
@@ -189,6 +189,8 @@ export default function Repositories() {
           display:        'flex',
           alignItems:     'center',
           justifyContent: 'space-between',
+          flexWrap:       'wrap',
+          gap:            16,
           marginBottom:   32,
         }}>
           <div>

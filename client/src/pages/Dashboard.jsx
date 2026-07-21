@@ -148,7 +148,7 @@ export default function Dashboard() {
 
         {/* Stats */}
         {stats && (
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 12, marginBottom: 32 }}>
+          <div className="grid-auto-4" style={{ marginBottom: 32 }}>
             {[
               { label: 'Total Reviews', value: stats.totalReviews },
               { label: 'Average Score', value: stats.avgScore },
@@ -156,8 +156,11 @@ export default function Dashboard() {
               { label: 'Failed', value: stats.failedReview, color: 'var(--danger)' },
             ].map(s => (
               <div key={s.label} style={{
-                borderRadius: 10, border: '1px solid var(--border)',
-                background: 'var(--card)', padding: '16px 20px', transition: 'border-color 0.3s',
+                borderRadius: 10,
+                border: '1px solid var(--border)',
+                background: 'var(--card)',
+                padding: '16px 20px',
+                transition: 'border-color 0.3s',
               }}>
                 <div style={{ fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.07em', color: 'var(--muted-foreground)', marginBottom: 8 }}>
                   {s.label}
@@ -200,24 +203,26 @@ export default function Dashboard() {
               onMouseEnter={e => e.currentTarget.style.borderColor = '#7c3aed'}
               onMouseLeave={e => e.currentTarget.style.borderColor = 'var(--border)'}
             >
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr auto', gap: 16 }}>
-                <div>
-                  <div style={{ fontSize: 11, color: 'var(--muted-foreground)', marginBottom: 4 }}>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr auto', gap: 12, minWidth: 0 }}>
+                <div style={{ minWidth: 0 }}>
+                  <div style={{ fontSize: 11, color: 'var(--muted-foreground)', marginBottom: 4, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                     <span style={{ fontFamily: 'monospace' }}>#{r.prNumber}</span>{' • '}{r.repoName}
                   </div>
-                  <div style={{ fontSize: 15, fontWeight: 600, color: '#fff', marginBottom: 4 }}>{r.prTitle}</div>
-                  <div style={{ fontSize: 12, color: 'var(--muted-foreground)' }}>by {r.author} · {timeAgo(r.createdAt)}</div>
+                  <div style={{ fontSize: 15, fontWeight: 600, color: '#fff', marginBottom: 4, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{r.prTitle}</div>
+                  <div style={{ fontSize: 12, color: 'var(--muted-foreground)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>by {r.author} · {timeAgo(r.createdAt)}</div>
                 </div>
-                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 6 }}>
+                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 6, flexShrink: 0 }}>
                   <span style={{
                     borderRadius: 999, padding: '4px 10px', fontSize: 12, fontWeight: 600,
                     background: passed ? 'rgba(63,185,80,0.15)' : 'rgba(248,81,73,0.15)',
                     color: passed ? 'var(--success)' : 'var(--danger)',
+                    whiteSpace: 'nowrap',
                   }}>{r.score?.overall}</span>
                   <span style={{
                     borderRadius: 6, padding: '2px 8px', fontSize: 10, fontWeight: 700, textTransform: 'uppercase',
                     border: `1px solid ${passed ? 'rgba(63,185,80,0.4)' : 'rgba(248,81,73,0.4)'}`,
                     color: passed ? 'var(--success)' : 'var(--danger)',
+                    whiteSpace: 'nowrap',
                   }}>{passed ? 'Pass' : 'Fail'}</span>
                 </div>
               </div>

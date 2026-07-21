@@ -53,6 +53,7 @@ function ArrowRight() {
 
 export default function Landing() {
   const [user, setUser] = useState(null);   // null = not checked, false = not logged in
+  const [navOpen, setNavOpen] = useState(false);
 
   // Check if already logged in on mount
   useEffect(() => {
@@ -90,73 +91,120 @@ export default function Landing() {
         <div style={{ maxWidth: 1100, margin: '0 auto', padding: '12px 24px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           <Logo />
 
-          <nav style={{ display: 'flex', alignItems: 'center', gap: 32 }}>
+          {/* Desktop nav links */}
+          <nav className="landing-nav-links" style={{ display: 'flex', alignItems: 'center', gap: 32 }}>
+            {/* Mobile close button */}
+            {navOpen && (
+              <button
+                onClick={() => setNavOpen(false)}
+                style={{
+                  position: 'absolute', top: 20, right: 20,
+                  background: 'none', border: 'none', cursor: 'pointer',
+                  fontSize: 24, color: '#374151', display: 'flex',
+                }}
+                aria-label="Close menu"
+              >
+                ✕
+              </button>
+            )}
             {[['#how', 'How it works'], ['#features', 'Features']].map(([href, label]) => (
-              <a key={href} href={href} style={{ fontSize: '14px', fontWeight: 500, color: '#64748b', textDecoration: 'none', transition: 'color 0.15s' }}
+              <a key={href} href={href}
+                onClick={() => setNavOpen(false)}
+                style={{ fontSize: navOpen ? '20px' : '14px', fontWeight: 500, color: '#64748b', textDecoration: 'none', transition: 'color 0.15s' }}
                 onMouseEnter={e => e.target.style.color = '#0f0f0f'}
                 onMouseLeave={e => e.target.style.color = '#64748b'}
               >
                 {label}
               </a>
             ))}
-            <Link to="/manual" style={{ fontSize: '14px', fontWeight: 500, color: '#7c3aed', textDecoration: 'none', transition: 'color 0.15s' }}
+            <Link to="/manual"
+              onClick={() => setNavOpen(false)}
+              style={{ fontSize: navOpen ? '20px' : '14px', fontWeight: 500, color: '#7c3aed', textDecoration: 'none', transition: 'color 0.15s' }}
               onMouseEnter={e => e.target.style.color = '#6d28d9'}
               onMouseLeave={e => e.target.style.color = '#7c3aed'}
             >
               Manual Review
             </Link>
+            {navOpen && (
+              user ? (
+                <Link to="/dashboard" onClick={() => setNavOpen(false)}
+                  style={{ fontSize: '20px', fontWeight: 500, color: '#64748b', textDecoration: 'none' }}>
+                  Dashboard
+                </Link>
+              ) : (
+                <button onClick={() => { setNavOpen(false); handleLogin(); }}
+                  style={{ fontSize: '18px', fontWeight: 600, background: '#111827', color: '#fff', border: 'none', padding: '12px 28px', borderRadius: 10, cursor: 'pointer' }}>
+                  Login with GitHub
+                </button>
+              )
+            )}
           </nav>
 
-          {/* Navbar right — shows login or avatar+logout */}
-          {user ? (
-            <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-              <Link
-                to="/dashboard"
-                style={{
-                  fontSize: '13px', fontWeight: 500, color: '#64748b',
-                  textDecoration: 'none',
-                }}
-              >
-                Dashboard
-              </Link>
+          {/* Right side — desktop only */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+            {/* Hamburger — shown on mobile via CSS */}
+            <button
+              className="landing-hamburger"
+              onClick={() => setNavOpen(o => !o)}
+              aria-label="Toggle navigation"
+            >
+              <span style={{ transform: navOpen ? 'rotate(45deg) translate(5px,5px)' : 'none', transition: 'transform 0.2s' }} />
+              <span style={{ opacity: navOpen ? 0 : 1, transition: 'opacity 0.2s' }} />
+              <span style={{ transform: navOpen ? 'rotate(-45deg) translate(5px,-5px)' : 'none', transition: 'transform 0.2s' }} />
+            </button>
+
+            {/* Desktop login/logout — hide on mobile when nav is open */}
+            {user ? (
+              <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                <Link to="/dashboard" style={{ fontSize: '13px', fontWeight: 500, color: '#64748b', textDecoration: 'none' }}>
+                  Dashboard
+                </Link>
+                <button
+                  onClick={handleLogout}
+                  style={{
+                    display: 'inline-flex', alignItems: 'center', gap: 7,
+                    background: '#fff', color: '#374151',
+                    padding: '8px 16px', borderRadius: 9,
+                    fontSize: '13px', fontWeight: 500,
+                    border: '1px solid #e2e8f0',
+                    cursor: 'pointer',
+                    transition: 'background 0.15s',
+                  }}
+                  onMouseEnter={e => e.currentTarget.style.background = '#f8fafc'}
+                  onMouseLeave={e => e.currentTarget.style.background = '#fff'}
+                >
+                  Logout
+                </button>
+              </div>
+            ) : (
               <button
-                onClick={handleLogout}
+                onClick={handleLogin}
                 style={{
                   display: 'inline-flex', alignItems: 'center', gap: 7,
-                  background: '#fff', color: '#374151',
+                  background: '#111827', color: '#ffffff',
                   padding: '8px 16px', borderRadius: 9,
                   fontSize: '13px', fontWeight: 500,
-                  border: '1px solid #e2e8f0',
-                  cursor: 'pointer',
+                  border: 'none', cursor: 'pointer',
+                  boxShadow: '0 1px 3px rgba(0,0,0,0.2)',
                   transition: 'background 0.15s',
                 }}
-                onMouseEnter={e => e.currentTarget.style.background = '#f8fafc'}
-                onMouseLeave={e => e.currentTarget.style.background = '#fff'}
+                onMouseEnter={e => e.currentTarget.style.background = '#374151'}
+                onMouseLeave={e => e.currentTarget.style.background = '#111827'}
               >
-                Logout
+                <GithubIcon />
+                Login with GitHub
               </button>
-            </div>
-          ) : (
-            <button
-              onClick={handleLogin}
-              style={{
-                display: 'inline-flex', alignItems: 'center', gap: 7,
-                background: '#111827', color: '#ffffff',
-                padding: '8px 16px', borderRadius: 9,
-                fontSize: '13px', fontWeight: 500,
-                border: 'none', cursor: 'pointer',
-                boxShadow: '0 1px 3px rgba(0,0,0,0.2)',
-                transition: 'background 0.15s',
-              }}
-              onMouseEnter={e => e.currentTarget.style.background = '#374151'}
-              onMouseLeave={e => e.currentTarget.style.background = '#111827'}
-            >
-              <GithubIcon />
-              Login with GitHub
-            </button>
-          )}
+            )}
+          </div>
         </div>
       </header>
+
+      {/* Mobile nav overlay class toggling */}
+      <style>{`
+        @media (max-width: 767px) {
+          .landing-nav-links { display: ${navOpen ? 'flex' : 'none'} !important; }
+        }
+      `}</style>
 
       {/* Hero */}
       <section style={{ position: 'relative', overflow: 'hidden' }}>
@@ -232,7 +280,7 @@ export default function Landing() {
           {/* Built with Logos Row */}
           <div style={{ marginTop: 52, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 14 }}>
             <p style={{ fontSize: '11.5px', fontWeight: 600, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.08em', margin: 0 }}>Built with</p>
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 16, flexWrap: 'nowrap' }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 10, flexWrap: 'wrap', rowGap: 8 }}>
               {[
                 { icon: '🦙', text: 'LangGraph Agents' },
                 { icon: '✦', text: 'Gemini 2.5 Flash' },
