@@ -520,9 +520,8 @@ For complete, step-by-step instructions on setting up AWS EC2, DuckDNS, Nginx re
 <img width="1920" height="1080" alt="Review Detail" src="https://github.com/user-attachments/assets/9dc259f9-7bc6-4466-b393-241b65db3dfb" />
 <img width="1920" height="1080" alt="Manual Review" src="https://github.com/user-attachments/assets/ac7d1a77-858f-4409-b91a-5bded550c522" />
 <img width="1920" height="1080" alt="Repositories" src="https://github.com/user-attachments/assets/44ed2918-f32b-4977-8c47-f337d872392a" />
+<img width="994" height="401" alt="Screenshot 2026-07-23 114340" src="https://github.com/user-attachments/assets/ee073724-98a5-4423-883b-c57b85715bf6" />
+<img width="1920" height="856" alt="Screenshot 2026-07-23 120802" src="https://github.com/user-attachments/assets/dcad2390-54a4-4b27-8a47-5abfda780770" />
+<img width="946" height="850" alt="Screenshot 2026-07-23 121603" src="https://github.com/user-attachments/assets/697abdb9-d05f-419e-8bb7-95f4027e926a" />
 
 ---
-
-## 📄 License
-
-Distributed under the MIT License. See `LICENSE` for more information.
