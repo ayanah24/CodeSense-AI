@@ -22,7 +22,7 @@ router.get('/github/callback',
 
       const { token, jti } = signToken({
         userId: user._id.toString(),
-        role:   user.role,
+        role: user.role,
       });
 
       // ioredis syntax — EX as separate argument
@@ -35,9 +35,9 @@ router.get('/github/callback',
 
       res.cookie('token', token, {
         httpOnly: true,
-        secure:   process.env.NODE_ENV === 'production',
-        sameSite: 'strict',
-        maxAge:   SESSION_TTL * 1000,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'lax',
+        maxAge: SESSION_TTL * 1000,
       });
 
       res.redirect(`${process.env.CLIENT_URL}/dashboard`);
@@ -50,9 +50,9 @@ router.get('/github/callback',
 );
 
 //get /auth/token for socket connection
-router.get('/token',authMiddleware,(req,res)=>{
-  const token=req.cookies?.token;
-  res.json({token});
+router.get('/token', authMiddleware, (req, res) => {
+  const token = req.cookies?.token;
+  res.json({ token });
 });
 
 

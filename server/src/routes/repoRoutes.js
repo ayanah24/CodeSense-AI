@@ -221,7 +221,7 @@ router.post('/:repoId/index', async (req, res) => {
     res.status(500).json({
       success: false,
       error: 'Failed to index repo',
-      detail: err.message,       // ← shows real error in response
+      detail: err.message,
     });
   }
 });
