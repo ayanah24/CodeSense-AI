@@ -20,8 +20,6 @@ afterEach(async () => {
     await ApiKey.deleteMany({});
 });
 
-// You'll need a way to fake a logged-in JWT session for these —
-// e.g. a helper that signs a test JWT and sets it as a cookie
 function authCookie(userId) {
     // adapt to however your JWT auth actually issues/reads cookies
     const jwt = require('jsonwebtoken');
