@@ -1,3 +1,4 @@
+import { randomUUID } from 'node:crypto';
 import { getCodeReview } from '../services/llmService.js';
 import Review from '../models/Review.js';
 
@@ -25,12 +26,14 @@ ${code.split('\n').map((line, i) => `Line ${i + 1} [added]: ${line}`).join('\n')
 
         //save to mongodb
         const saved = await Review.create({
+            userId: req.user.userId,
             prNumber: 0,
             // 0 means manual review — not a real PR
             prTitle: `Manual Review — ${language}`,
             author: 'manual',
             repoName: 'manual',
             commitSha: 'manual-' + Date.now(),
+            jobId: `manual-${randomUUID()}`,
             summary: review.summary,
             score: review.score,
             issues: review.issues,

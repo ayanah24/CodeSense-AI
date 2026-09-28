@@ -2,33 +2,27 @@ import { Link } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 
 const features = [
-  { icon: '🧠', title: 'Multi-Agent Review Pipeline', desc: 'Diffs are classified, then routed to specialized security, logic, and style agents that review in parallel — not a single generic LLM call.' },
-  { icon: '📊', title: '4-Dimension Scoring', desc: 'Every review scores Security, Performance, Quality, and Tests independently, plus an overall 0–100 score with pass/fail.' },
-  { icon: '🔍', title: 'RAG-Enhanced Context', desc: 'Your codebase is indexed into a vector store so the AI understands existing patterns, not just the diff in isolation.' },
-  { icon: '⚡', title: 'Real-Time Dashboard', desc: 'Reviews land on your dashboard the instant they finish via WebSocket — no refresh needed.' },
-  { icon: '📋', title: 'Manual Code Review', desc: 'Paste any snippet — no repo needed. Get a full AI review with scores and actionable fixes in seconds.' },
-  { icon: '🔗', title: 'CI/CD API Keys', desc: 'Generate API keys and trigger reviews from any pipeline. Submit a diff, get back a scored review — fully async.' },
-  { icon: '🔒', title: 'Merge Gate Protection', desc: 'GitHub commit status checks automatically block PRs that score below your threshold from merging.' },
-  { icon: '💬', title: 'GitHub PR Comments', desc: 'Formatted Markdown review with severity badges and fix suggestions posted directly on your pull request.' },
+  { icon: '🧠', title: 'Focused, multi-agent analysis', desc: 'Specialist agents examine security, logic, and code quality in parallel, surfacing focused findings instead of generic feedback.' },
+  { icon: '📊', title: 'Consistent review scores', desc: 'See security, performance, quality, and test coverage alongside an overall score to compare review outcomes.' },
+  { icon: '🔍', title: 'Repository-aware feedback', desc: 'Code retrieval adds relevant repository context, helping findings account for existing patterns and surrounding code.' },
+  { icon: '⚡', title: 'Live review status', desc: 'Track submitted reviews from your dashboard and see results arrive without repeatedly refreshing the page.' },
+  { icon: '📋', title: 'On-demand code review', desc: 'Review a snippet without connecting a repository. Get structured findings and practical suggestions in the manual editor.' },
+  { icon: '🔗', title: 'Pipeline-ready API', desc: 'Submit code for review from your CI/CD workflow using API keys, then retrieve scored results asynchronously.' },
+  { icon: '🔒', title: 'Configurable merge gates', desc: 'Use GitHub commit status checks to flag pull requests that fall below your configured review threshold.' },
+  { icon: '💬', title: 'Findings in pull requests', desc: 'See review summaries, severity, and suggested fixes directly in your pull request discussion.' },
 ];
 
 const API = import.meta.env.VITE_API_URL || 'http://localhost:3000';
 
 function Logo() {
   return (
-    <Link to="/" style={{ display: 'flex', alignItems: 'center', gap: 8, textDecoration: 'none' }}>
-      <div style={{
-        width: 32, height: 32,
-        background: 'rgba(124,58,237,0.12)',
-        borderRadius: 8,
-        display: 'flex', alignItems: 'center', justifyContent: 'center',
-        color: '#7c3aed',
-      }}>
+    <Link to="/" className="landing-brand" style={{ display: 'flex', alignItems: 'center', gap: 8, textDecoration: 'none' }}>
+      <div className="landing-brand-mark">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" style={{ width: 15, height: 15 }}>
           <polyline points="9 18 3 12 9 6" /><polyline points="15 6 21 12 15 18" />
         </svg>
       </div>
-      <span style={{ fontSize: '15px', fontWeight: 600, color: '#0f0f0f', letterSpacing: '-0.01em' }}>
+      <span className="landing-brand-name" style={{ fontSize: '15px', fontWeight: 600, color: '#0f0f0f', letterSpacing: '-0.01em' }}>
         CodeSense AI
       </span>
     </Link>
@@ -78,37 +72,21 @@ export default function Landing() {
   }
 
   return (
-    <div style={{ minHeight: '100vh', background: '#ffffff', color: '#0f0f0f', fontFamily: 'Inter, ui-sans-serif, system-ui, sans-serif' }}>
+    <div className="landing-page" style={{ minHeight: '100vh', background: '#ffffff', color: '#0f0f0f', fontFamily: 'Inter, ui-sans-serif, system-ui, sans-serif' }}>
 
       {/* ── Navbar ──────────────────────────────────────────────────────────── */}
-      <header style={{
+      <header className="landing-header" style={{
         position: 'sticky', top: 0, zIndex: 20,
         borderBottom: '1px solid rgba(226,232,240,0.7)',
         background: 'rgba(255,255,255,0.85)',
-        backdropFilter: 'blur(10px)',
-        WebkitBackdropFilter: 'blur(10px)',
       }}>
         <div style={{ maxWidth: 1100, margin: '0 auto', padding: '12px 24px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           <Logo />
 
           {/* Desktop nav links */}
           <nav className="landing-nav-links" style={{ display: 'flex', alignItems: 'center', gap: 32 }}>
-            {/* Mobile close button */}
-            {navOpen && (
-              <button
-                onClick={() => setNavOpen(false)}
-                style={{
-                  position: 'absolute', top: 20, right: 20,
-                  background: 'none', border: 'none', cursor: 'pointer',
-                  fontSize: 24, color: '#374151', display: 'flex',
-                }}
-                aria-label="Close menu"
-              >
-                ✕
-              </button>
-            )}
             {[['#how', 'How it works'], ['#features', 'Features']].map(([href, label]) => (
-              <a key={href} href={href}
+              <a key={href} href={href} className="landing-nav-item"
                 onClick={() => setNavOpen(false)}
                 style={{ fontSize: navOpen ? '20px' : '14px', fontWeight: 500, color: '#64748b', textDecoration: 'none', transition: 'color 0.15s' }}
                 onMouseEnter={e => e.target.style.color = '#0f0f0f'}
@@ -117,7 +95,12 @@ export default function Landing() {
                 {label}
               </a>
             ))}
-            <Link to="/manual"
+            <Link to="/docs" className="landing-nav-item"
+              onClick={() => setNavOpen(false)}
+              style={{ fontSize: navOpen ? '20px' : '14px', fontWeight: 600, color: '#374151', textDecoration: 'none' }}>
+              Docs
+            </Link>
+            <Link to="/manual" className="landing-nav-item landing-nav-manual"
               onClick={() => setNavOpen(false)}
               style={{ fontSize: navOpen ? '20px' : '14px', fontWeight: 500, color: '#7c3aed', textDecoration: 'none', transition: 'color 0.15s' }}
               onMouseEnter={e => e.target.style.color = '#6d28d9'}
@@ -141,12 +124,13 @@ export default function Landing() {
           </nav>
 
           {/* Right side — desktop only */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+          <div className="landing-header-actions" style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
             {/* Hamburger — shown on mobile via CSS */}
             <button
               className="landing-hamburger"
               onClick={() => setNavOpen(o => !o)}
-              aria-label="Toggle navigation"
+              aria-label={navOpen ? 'Close navigation' : 'Open navigation'}
+              aria-expanded={navOpen}
             >
               <span style={{ transform: navOpen ? 'rotate(45deg) translate(5px,5px)' : 'none', transition: 'transform 0.2s' }} />
               <span style={{ opacity: navOpen ? 0 : 1, transition: 'opacity 0.2s' }} />
@@ -159,7 +143,7 @@ export default function Landing() {
                 <Link to="/dashboard" style={{ fontSize: '13px', fontWeight: 500, color: '#64748b', textDecoration: 'none' }}>
                   Dashboard
                 </Link>
-                <button
+                <button className="landing-auth-button"
                   onClick={handleLogout}
                   style={{
                     display: 'inline-flex', alignItems: 'center', gap: 7,
@@ -177,7 +161,7 @@ export default function Landing() {
                 </button>
               </div>
             ) : (
-              <button
+              <button className="landing-auth-button"
                 onClick={handleLogin}
                 style={{
                   display: 'inline-flex', alignItems: 'center', gap: 7,
@@ -207,15 +191,15 @@ export default function Landing() {
       `}</style>
 
       {/* Hero */}
-      <section style={{ position: 'relative', overflow: 'hidden' }}>
-        <div style={{
+      <section className="landing-hero" style={{ position: 'relative', overflow: 'hidden' }}>
+        <div className="landing-hero-wash" style={{
           position: 'absolute', inset: 0, zIndex: 0, pointerEvents: 'none',
           background: 'radial-gradient(ellipse 70% 50% at 50% 0%, rgba(124,58,237,0.09) 0%, transparent 70%)',
         }} />
 
-        <div style={{ position: 'relative', zIndex: 1, maxWidth: 800, margin: '0 auto', padding: '96px 24px 88px', textAlign: 'center' }}>
+        <div className="landing-hero-content" style={{ position: 'relative', zIndex: 1, maxWidth: 800, margin: '0 auto', padding: '96px 24px 88px', textAlign: 'center' }}>
 
-          <div style={{
+          <div className="landing-announcement" style={{
             display: 'inline-flex', alignItems: 'center', gap: 7,
             background: '#ffffff', border: '1px solid #e2e8f0',
             borderRadius: 999, padding: '5px 14px',
@@ -223,26 +207,25 @@ export default function Landing() {
             boxShadow: '0 1px 4px rgba(0,0,0,0.06)', marginBottom: 32,
           }}>
             <span style={{ width: 7, height: 7, borderRadius: '50%', background: '#22c55e', display: 'inline-block', flexShrink: 0 }} />
-            New — Merge gate protection is live
+            GitHub merge checks · Now available
           </div>
 
-          <h1 style={{
+          <h1 className="landing-title" style={{
             fontSize: 'clamp(38px, 6vw, 62px)', fontWeight: 800,
             lineHeight: 1.1, letterSpacing: '-0.03em', color: '#0f0f0f',
             marginBottom: 22,
           }}>
-            AI Code Reviews That{' '}
-            <span className="gradient-text">Actually Make Sense</span>
+            Ship better code with{' '}
+            <span className="gradient-text">feedback you can act on.</span>
           </h1>
 
           <p style={{ fontSize: '17px', color: '#64748b', lineHeight: 1.7, maxWidth: 520, margin: '0 auto 40px' }}>
-            Automated PR reviews powered by AI. Catches bugs, security issues,
-            and bad practices before they hit production.
+            Review pull requests for security, quality, and performance, with clear findings delivered to your dashboard and GitHub.
           </p>
 
           {/* CTA — goes to dashboard if logged in, triggers OAuth if not */}
           {user ? (
-            <Link
+            <Link className="landing-primary-cta"
               to="/dashboard"
               style={{
                 display: 'inline-flex', alignItems: 'center', gap: 8,
@@ -258,7 +241,7 @@ export default function Landing() {
               Go to Dashboard <ArrowRight />
             </Link>
           ) : (
-            <button
+            <button className="landing-primary-cta"
               onClick={handleLogin}
               style={{
                 display: 'inline-flex', alignItems: 'center', gap: 8,
@@ -278,7 +261,7 @@ export default function Landing() {
           )}
 
           {/* Built with Logos Row */}
-          <div style={{ marginTop: 52, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 14 }}>
+          <div className="landing-stack" style={{ marginTop: 52, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 14 }}>
             <p style={{ fontSize: '11.5px', fontWeight: 600, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.08em', margin: 0 }}>Built with</p>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 10, flexWrap: 'wrap', rowGap: 8 }}>
               {[
@@ -290,6 +273,7 @@ export default function Landing() {
               ].map((item, idx) => (
                 <span
                   key={idx}
+                  className="landing-stack-chip"
                   style={{
                     fontSize: '14px',
                     fontWeight: 600,
@@ -330,22 +314,22 @@ export default function Landing() {
       </section>
 
       {/*  How it works */}
-      <section id="how" style={{ borderTop: '1px solid #f1f5f9', background: 'rgba(248,250,252,0.6)', padding: '80px 24px' }}>
+      <section id="how" className="landing-how" style={{ borderTop: '1px solid #f1f5f9', background: 'rgba(248,250,252,0.6)', padding: '80px 24px' }}>
         <div style={{ maxWidth: 1000, margin: '0 auto' }}>
           <div style={{ textAlign: 'center', marginBottom: 52 }}>
             <h2 style={{ fontSize: 'clamp(26px, 4vw, 38px)', fontWeight: 700, color: '#0f0f0f', letterSpacing: '-0.02em', marginBottom: 10 }}>
               How it works
             </h2>
-            <p style={{ fontSize: '15px', color: '#64748b' }}>Four steps from sign-in to AI-reviewed code.</p>
+            <p style={{ fontSize: '15px', color: '#64748b' }}>Connect a repository once, then get contextual reviews as you work through pull requests.</p>
           </div>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(210px, 1fr))', gap: 16 }}>
             {[
-              { n: 1, title: 'Sign in & connect repos', desc: 'One-click GitHub OAuth login, then pick the repos you want reviewed — we register webhooks automatically.' },
-              { n: 2, title: 'Index your codebase', desc: 'We chunk and embed your repo into a vector store so the AI has full context, not just the raw diff.' },
-              { n: 3, title: 'Push a PR or paste code', desc: 'Open a pull request for automatic queue-based review, or paste any snippet into the manual editor.' },
-              { n: 4, title: 'Multi-agent review in seconds', desc: 'Specialized agents score security, logic, and style in parallel. Results land on your dashboard and PR in real time.' },
+              { n: 1, title: 'Connect GitHub', desc: 'Sign in securely and select the repositories you want CodeSense AI to review.' },
+              { n: 2, title: 'Build repository context', desc: 'CodeSense AI indexes your codebase so reviews can consider relevant project patterns alongside each change.' },
+              { n: 3, title: 'Open a pull request', desc: 'Submit changes through your normal workflow and let the repository integration start a review.' },
+              { n: 4, title: 'Review clear findings', desc: 'Explore scored results in your dashboard and pull request, with merge checks set to your preferred threshold.' },
             ].map((s) => (
-              <div key={s.n}
+              <div key={s.n} className="landing-step"
                 style={{ background: '#ffffff', border: '1px solid #e2e8f0', borderRadius: 14, padding: '24px', transition: 'box-shadow 0.2s' }}
                 onMouseEnter={e => e.currentTarget.style.boxShadow = '0 4px 20px rgba(0,0,0,0.08)'}
                 onMouseLeave={e => e.currentTarget.style.boxShadow = 'none'}
@@ -362,17 +346,17 @@ export default function Landing() {
       </section>
 
       {/* Features */}
-      <section id="features" style={{ borderTop: '1px solid #f1f5f9', padding: '80px 24px' }}>
+      <section id="features" className="landing-features" style={{ borderTop: '1px solid #f1f5f9', padding: '80px 24px' }}>
         <div style={{ maxWidth: 1000, margin: '0 auto' }}>
           <div style={{ textAlign: 'center', marginBottom: 52 }}>
             <h2 style={{ fontSize: 'clamp(26px, 4vw, 38px)', fontWeight: 700, color: '#0f0f0f', letterSpacing: '-0.02em', marginBottom: 10 }}>
-              Everything you need to ship safer code
+              A clearer signal in every code review
             </h2>
-            <p style={{ fontSize: '15px', color: '#64748b' }}>A multi-agent pipeline, RAG-powered context, and real-time results — from PR webhooks to CI/CD API.</p>
+            <p style={{ fontSize: '15px', color: '#64748b' }}>Consistent analysis, repository context, and actionable results across the tools you already use.</p>
           </div>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 14 }}>
             {features.map((f) => (
-              <div key={f.title}
+              <div key={f.title} className="landing-feature"
                 style={{ background: '#ffffff', border: '1px solid #e2e8f0', borderRadius: 14, padding: '22px', transition: 'transform 0.2s, border-color 0.2s, box-shadow 0.2s' }}
                 onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.borderColor = 'rgba(124,58,237,0.35)'; e.currentTarget.style.boxShadow = '0 4px 16px rgba(0,0,0,0.07)'; }}
                 onMouseLeave={e => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.borderColor = '#e2e8f0'; e.currentTarget.style.boxShadow = 'none'; }}
@@ -387,17 +371,17 @@ export default function Landing() {
       </section>
 
       {/* Manual Review callout */}
-      <section id="try-free" style={{ borderTop: '1px solid #f1f5f9', padding: '80px 24px', background: '#ffffff' }}>
+      <section id="try-free" className="landing-manual" style={{ borderTop: '1px solid #f1f5f9', padding: '80px 24px', background: '#ffffff' }}>
         <div style={{ maxWidth: 1000, margin: '0 auto', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: 48, alignItems: 'center' }}>
           <div>
-            <div style={{ display: 'inline-flex', alignItems: 'center', gap: 6, background: 'rgba(124,58,237,0.08)', border: '1px solid rgba(124,58,237,0.2)', borderRadius: 999, padding: '5px 14px', fontSize: 12, fontWeight: 600, color: '#7c3aed', marginBottom: 20 }}>
+            <div className="landing-manual-label" style={{ display: 'inline-flex', alignItems: 'center', gap: 6, background: 'rgba(124,58,237,0.08)', border: '1px solid rgba(124,58,237,0.2)', borderRadius: 999, padding: '5px 14px', fontSize: 12, fontWeight: 600, color: '#7c3aed', marginBottom: 20 }}>
               ✦ No GitHub needed
             </div>
             <h2 style={{ fontSize: 'clamp(26px,4vw,36px)', fontWeight: 800, letterSpacing: '-0.02em', color: '#0f0f0f', lineHeight: 1.15, marginBottom: 16 }}>
-              Review any code,{' '}<span className="gradient-text">instantly & free</span>
+              Review code without connecting GitHub
             </h2>
             <p style={{ fontSize: 15, color: '#64748b', lineHeight: 1.75, marginBottom: 32, maxWidth: 400 }}>
-              Don't have a GitHub repo? No problem. Paste any snippet directly into our editor and get a full AI review — security, performance, quality, and tests — in seconds.
+              Evaluate a function, investigate a concern, or get a second opinion without connecting a repository. Paste a snippet for structured feedback on security, performance, quality, and tests.
             </p>
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: 10, marginBottom: 36 }}>
               {[{ icon: '🛡️', text: 'Security scan' }, { icon: '⚡', text: 'Performance check' }, { icon: '✨', text: 'Quality score' }, { icon: '🧪', text: 'Test coverage review' }].map(f => (
@@ -406,14 +390,14 @@ export default function Landing() {
                 </span>
               ))}
             </div>
-            <Link to="/manual" style={{ display: 'inline-flex', alignItems: 'center', gap: 8, background: 'linear-gradient(135deg,#7c3aed,#6366f1)', color: '#fff', padding: '13px 28px', borderRadius: 10, fontSize: 15, fontWeight: 600, textDecoration: 'none', boxShadow: '0 4px 20px rgba(124,58,237,0.28)', transition: 'transform 0.15s, box-shadow 0.15s' }}
+            <Link className="landing-manual-cta" to="/manual" style={{ display: 'inline-flex', alignItems: 'center', gap: 8, background: 'linear-gradient(135deg,#7c3aed,#6366f1)', color: '#fff', padding: '13px 28px', borderRadius: 10, fontSize: 15, fontWeight: 600, textDecoration: 'none', boxShadow: '0 4px 20px rgba(124,58,237,0.28)', transition: 'transform 0.15s, box-shadow 0.15s' }}
               onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = '0 8px 30px rgba(124,58,237,0.40)'; }}
               onMouseLeave={e => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = '0 4px 20px rgba(124,58,237,0.28)'; }}
             >
               Try Manual Review Free <ArrowRight />
             </Link>
           </div>
-          <div style={{ background: '#0d1117', border: '1px solid #30363d', borderRadius: 14, overflow: 'hidden', boxShadow: '0 20px 60px rgba(0,0,0,0.18)' }}>
+          <div className="landing-editor-preview" style={{ background: '#0d1117', border: '1px solid #30363d', borderRadius: 14, overflow: 'hidden', boxShadow: '0 20px 60px rgba(0,0,0,0.18)' }}>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '10px 16px', borderBottom: '1px solid #30363d', background: '#161b22' }}>
               <div style={{ display: 'flex', gap: 6 }}>
                 <span style={{ width: 10, height: 10, borderRadius: '50%', background: '#f85149', display: 'inline-block' }} />
@@ -438,10 +422,10 @@ export default function Landing() {
       </section>
 
       {/* CTA strip */}
-      <section style={{ borderTop: '1px solid #f1f5f9', background: 'rgba(248,250,252,0.6)', padding: '72px 24px', textAlign: 'center' }}>
+      <section className="landing-final-cta" style={{ borderTop: '1px solid #f1f5f9', background: 'rgba(248,250,252,0.6)', padding: '72px 24px', textAlign: 'center' }}>
         <div style={{ maxWidth: 560, margin: '0 auto' }}>
           <h2 style={{ fontSize: 'clamp(24px, 3.5vw, 34px)', fontWeight: 700, color: '#0f0f0f', letterSpacing: '-0.02em', marginBottom: 24 }}>
-            Ready to ship safer code?
+            Make your next code review more useful.
           </h2>
           {user ? (
             <Link to="/dashboard"
@@ -464,9 +448,10 @@ export default function Landing() {
       </section>
 
       {/* Footer */}
-      <footer style={{ borderTop: '1px solid #e2e8f0', padding: '24px' }}>
+      <footer className="landing-footer" style={{ borderTop: '1px solid #e2e8f0', padding: '24px' }}>
         <div style={{ maxWidth: 1100, margin: '0 auto', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 12 }}>
           <Logo />
+          <Link to="/docs" style={{ color: '#64748b', fontSize: 13, fontWeight: 500, textDecoration: 'none' }}>Documentation</Link>
           <p style={{ fontSize: '13px', color: '#94a3b8' }}>© 2026 CodeSense AI</p>
         </div>
       </footer>

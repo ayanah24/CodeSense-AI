@@ -7,6 +7,7 @@ import ReviewDetail from './pages/ReviewDetail.jsx';
 import ManualReview from './pages/ManualReview.jsx';
 import Repositories from './pages/Repositories.jsx';
 import ApiKeys from './pages/ApiKeys.jsx';
+import Docs from './pages/Docs.jsx';
 export default function App() {
   return (
     <BrowserRouter>
@@ -14,6 +15,7 @@ export default function App() {
         <Routes>
           {/* Public */}
           <Route path='/' element={<Landing />} />
+          <Route path='/docs' element={<Docs />} />
           {/* Protected */}
           <Route path='/dashboard' element={
             <ProtectedRoute>
@@ -36,4 +38,4 @@ export default function App() {
       </AuthProvider>
     </BrowserRouter>
   );
-} 
+}
