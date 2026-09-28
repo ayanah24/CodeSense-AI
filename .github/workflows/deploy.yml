@@ -17,5 +17,6 @@ jobs:
           script: |
             cd ~/CodeSense-AI
             git pull origin main
-            docker compose up --build -d   
-            
+            docker compose build --no-cache client
+            docker compose up -d
+            docker image prune -f
