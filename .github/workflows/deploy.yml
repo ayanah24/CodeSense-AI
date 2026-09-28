@@ -15,9 +15,12 @@ jobs:
           username: ubuntu
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
+            set -e
             cd ~/CodeSense-AI
-            git pull origin main
-            docker compose down
+            git pull --ff-only origin main
+            echo "Deploying commit $(git rev-parse --short HEAD)"
             docker compose build --no-cache
             docker compose up -d --force-recreate
-            docker image prune -f
+            curl --fail --silent --show-error http://localhost:8000/ > /dev/null
+            docker image prune -f
+            docker compose ps
