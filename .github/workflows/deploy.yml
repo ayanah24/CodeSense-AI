@@ -26,6 +26,19 @@ jobs:
             echo "Starting containers"
             docker compose up -d --force-recreate
             echo "Checking frontend response"
-            curl --fail --silent --show-error http://localhost:8000/ > /dev/null
+            for attempt in $(seq 1 12); do
+              if curl --fail --silent http://localhost:8000/ > /dev/null; then
+                echo "Frontend responded successfully"
+                break
+              fi
+              if [ "$attempt" -eq 12 ]; then
+                echo "Frontend did not respond after 60 seconds"
+                docker compose ps
+                docker compose logs --tail=100 client
+                exit 1
+              fi
+              echo "Frontend not ready yet (attempt $attempt/12); retrying in 5 seconds"
+              sleep 5
+            done
             docker image prune -f
             docker compose ps
