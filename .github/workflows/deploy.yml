@@ -22,7 +22,7 @@ jobs:
             git pull --ff-only origin main
             echo "Deploying commit $(git rev-parse --short HEAD)"
             echo "Building Docker images"
-            docker compose build --parallel 1
+            docker compose --parallel 1 build
             echo "Starting containers"
             docker compose up -d --force-recreate
             echo "Checking frontend response"
