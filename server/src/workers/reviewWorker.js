@@ -73,11 +73,23 @@ const worker = new Worker(
     await job.updateProgress(40);
     const formattedDiff = formatDiffForLLM(parsedFiles);
 
-    // Step 3.5 — Look up repo owner (moved up — needed for RAG)
-    console.log('Looking up repo owner...');
-    const repo = await Repo.findOne({ repoName, isActive: true });
+    // Step 3.5 — Look up an authorized repository for RAG context.
+    // API callers may supply a repo name, so that lookup must be scoped to the
+    // API key owner. Webhook jobs do not carry a user ID and retain their
+    // existing repository lookup behavior.
+    console.log('Looking up authorized repository...');
+    const repoLookup = repoName
+      ? {
+        repoName,
+        isActive: true,
+        ...(source === 'api' ? { userId: job.data.userId } : {}),
+      }
+      : null;
+    const repo = repoLookup ? await Repo.findOne(repoLookup) : null;
+    const reviewOwnerId = source === 'api' ? job.data.userId : repo?.userId;
+
     if (!repo) {
-      console.log(`Repo ${repoName} not registered — reviewing without context`);
+      console.log(`No authorized repository found for ${repoName ?? 'this API review'} — reviewing without context`);
     } else {
       console.log(`Repo owner found — userId: ${repo.userId}`);
     }
@@ -116,7 +128,7 @@ const worker = new Worker(
     //Save review to MongoDB
     console.log('Saving review to MongoDB...');
     const savedReview = await Review.create({
-      userId: source === 'api' ? job.data.userId : (repo ? repo.userId : undefined),
+      userId: reviewOwnerId,
       prNumber: source === 'api' ? 0 : prNumber,
       prTitle: source === 'api' ? (repoName || 'API Review') : prTitle,
       author: source === 'api' ? 'api' : author,
@@ -132,10 +144,11 @@ const worker = new Worker(
     });
     console.log(`Review saved to MongoDB — ID: ${savedReview._id}`);
 
-    //redis publish — only when we know the repo owner
-    if (repo?.userId) {
+    // Publish only to the job owner. For API jobs, this is the API-key owner;
+    // for webhook jobs, it is the owner of the connected repository.
+    if (reviewOwnerId) {
       const payload = JSON.stringify({
-        userId: repo.userId.toString(),
+        userId: reviewOwnerId.toString(),
         review: {
           _id: savedReview._id,
           prNumber: savedReview.prNumber,
@@ -150,7 +163,7 @@ const worker = new Worker(
       });
 
       await publisher.publish('review:complete', payload);
-      console.log(`Published review:complete for userId: ${repo.userId}`);
+      console.log(`Published review:complete for userId: ${reviewOwnerId}`);
     }
 
     //step 5 - post comment on github pr

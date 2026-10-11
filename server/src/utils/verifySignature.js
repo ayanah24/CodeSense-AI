@@ -1,37 +1,36 @@
 import crypto from 'crypto';
 
-function verifySignature(req){
-    const signature=req.headers['x-hub-signature-256'];
+function verifySignature(req) {
+  const signature = req.headers['x-hub-signature-256'];
 
-    if(!signature){
-        return false;
-    }
-    const secret = process.env.GITHUB_WEBHOOK_SECRET?.trim();
-    if (!secret) {
-      console.error('Signature verification failed: missing webhook secret');
-      return false;
-    }
-    const hmac = crypto.createHmac('sha256', secret);
-    const rawBody = Buffer.isBuffer(req.body) ? req.body : null;
-    if (!rawBody) {
-      console.error('Signature verification failed: req.body is not a Buffer — ensure express.raw() middleware is applied to /webhook');
-      return false;
-    }
-    hmac.update(rawBody);
-    const digest='sha256='+hmac.digest('hex');
-    console.log('GitHub signature:', signature);
-    console.log('Our digest:      ', digest);
-    console.log('Secret used:     ', process.env.GITHUB_WEBHOOK_SECRET);
-    try{
-        return crypto.timingSafeEqual(
-            Buffer.from(signature),
-            Buffer.from(digest)
+  if (typeof signature !== 'string') {
+    return false;
+  }
 
-        );
+  const secret = process.env.GITHUB_WEBHOOK_SECRET?.trim();
+  if (!secret) {
+    console.error('Signature verification failed: missing webhook secret');
+    return false;
+  }
 
-    } catch (error) {
-        return false;
-    }
+  const rawBody = Buffer.isBuffer(req.body) ? req.body : null;
+  if (!rawBody) {
+    console.error('Signature verification failed: req.body is not a Buffer');
+    return false;
+  }
+
+  const expectedSignature = `sha256=${crypto
+    .createHmac('sha256', secret)
+    .update(rawBody)
+    .digest('hex')}`;
+  const receivedBuffer = Buffer.from(signature, 'utf8');
+  const expectedBuffer = Buffer.from(expectedSignature, 'utf8');
+
+  if (receivedBuffer.length !== expectedBuffer.length) {
+    return false;
+  }
+
+  return crypto.timingSafeEqual(receivedBuffer, expectedBuffer);
 }
 
 export default verifySignature;
