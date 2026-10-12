@@ -111,10 +111,6 @@ app.get('/api/health', async (req, res) => {
   const geminiKey = process.env.GEMINI_API_KEY;
   checks.geminiKey = geminiKey ? (geminiKey.length > 10 ? 'set' : 'too short') : 'missing';
 
-  // GitHub token
-  const ghToken = process.env.GITHUB_TOKEN;
-  checks.githubToken = ghToken ? (ghToken.startsWith('ghp_') ? 'ok' : 'unexpected format') : 'missing';
-
   // Webhook URL
   checks.webhookUrl = process.env.WEBHOOK_URL || 'missing';
 

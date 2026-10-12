@@ -5,6 +5,7 @@ import { parseDiff, formatDiffForLLM } from '../services/diffParser.js';
 import connectMongoDB from '../config/mongodb.js';
 import Review from '../models/Review.js';
 import Repo from '../models/Repo.js';
+import User from '../models/User.js';
 import 'dotenv/config';
 import { searchSimilarChunks } from '../services/pineconeService.js';
 import { reviewGraph } from '../agents/graph.js';
@@ -30,6 +31,7 @@ const worker = new Worker(
 
   async (job) => {
     const { prNumber, prTitle, author, diffUrl, repoName, commitSha, source, diff: providedDiff } = job.data;
+    const isApiReview = source === 'api';
 
     console.log(`\n=============================`);
     console.log(`Worker picked job: ${job.id}`);
@@ -37,17 +39,35 @@ const worker = new Worker(
     console.log(`Repo: ${repoName} | Author: ${author}`);
     console.log(`=============================\n`);
 
+    // Webhook jobs must use the connected repository owner's GitHub token.
+    // API jobs contain their own diff and never call GitHub.
+    let repo = null;
+    let encryptedGitHubToken = null;
+    if (!isApiReview) {
+      repo = await Repo.findOne({ repoName, isActive: true });
+      if (!repo) {
+        throw new Error('Connected repository not found or inactive');
+      }
+
+      const repoOwner = await User.findById(repo.userId).select('+githubAccessToken');
+      if (!repoOwner?.githubAccessToken) {
+        throw new Error('Repository owner GitHub token is unavailable');
+      }
+
+      encryptedGitHubToken = repoOwner.githubAccessToken;
+    }
+
     // Step 1 — Fetch raw diff from GitHub
     console.log('Step 1: Getting diff...');
     await job.updateProgress(10);
 
     let rawDiff;
-    if (source === 'api' && providedDiff) {
+    if (isApiReview && providedDiff) {
       console.log('Using diff provided directly via API');
       rawDiff = providedDiff;
     } else {
       console.log('Fetching diff from GitHub...');
-      rawDiff = await fetchPRDiff(diffUrl);
+      rawDiff = await fetchPRDiff(diffUrl, encryptedGitHubToken);
     }
     console.log('Diff ready');
 
@@ -74,19 +94,16 @@ const worker = new Worker(
     const formattedDiff = formatDiffForLLM(parsedFiles);
 
     // Step 3.5 — Look up an authorized repository for RAG context.
-    // API callers may supply a repo name, so that lookup must be scoped to the
-    // API key owner. Webhook jobs do not carry a user ID and retain their
-    // existing repository lookup behavior.
+    // API callers may supply a repo name, so that lookup is scoped to the
+    // API key owner. Webhook jobs already loaded their connected repository.
     console.log('Looking up authorized repository...');
-    const repoLookup = repoName
-      ? {
-        repoName,
-        isActive: true,
-        ...(source === 'api' ? { userId: job.data.userId } : {}),
-      }
-      : null;
-    const repo = repoLookup ? await Repo.findOne(repoLookup) : null;
-    const reviewOwnerId = source === 'api' ? job.data.userId : repo?.userId;
+    if (isApiReview) {
+      const repoLookup = repoName
+        ? { repoName, userId: job.data.userId, isActive: true }
+        : null;
+      repo = repoLookup ? await Repo.findOne(repoLookup) : null;
+    }
+    const reviewOwnerId = isApiReview ? job.data.userId : repo.userId;
 
     if (!repo) {
       console.log(`No authorized repository found for ${repoName ?? 'this API review'} — reviewing without context`);
@@ -170,7 +187,7 @@ const worker = new Worker(
     console.log('Step 5: Posting review comment on GitHub...');
     await job.updateProgress(75);
     if (source !== 'api') {
-      await postPRComment(repoName, prNumber, review);
+      await postPRComment(repoName, prNumber, review, encryptedGitHubToken);
       console.log('Review comment posted successfully');
     } else {
       console.log('API-triggered job — skipping GitHub comment');
@@ -180,7 +197,7 @@ const worker = new Worker(
     console.log('Step 6: Setting merge gate status check...');
     await job.updateProgress(90);
     if (source !== 'api') {
-      await setStatusCheck(repoName, commitSha, review.score.overall);
+      await setStatusCheck(repoName, commitSha, review.score.overall, encryptedGitHubToken);
       console.log('Status check set');
     } else {
       console.log('API-triggered job — skipping GitHub status check');

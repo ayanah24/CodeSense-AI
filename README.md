@@ -206,7 +206,6 @@ REDIS_URL=redis://localhost:6379
 GITHUB_CLIENT_ID=your_github_client_id
 GITHUB_CLIENT_SECRET=your_github_client_secret
 GITHUB_CALLBACK_URL=http://localhost:5000/auth/github/callback
-GITHUB_TOKEN=your_github_personal_access_token
 GITHUB_WEBHOOK_SECRET=your_secret_webhook_key
 
 # Public Webhook URL (use ngrok for local testing)

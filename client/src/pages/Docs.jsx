@@ -23,7 +23,6 @@ REDIS_PORT=6379
 GITHUB_CLIENT_ID=your_oauth_client_id
 GITHUB_CLIENT_SECRET=your_oauth_client_secret
 GITHUB_CALLBACK_URL=http://localhost:5000/auth/github/callback
-GITHUB_TOKEN=your_github_token_for_pr_comments_and_statuses
 GITHUB_WEBHOOK_SECRET=replace_with_a_random_secret
 WEBHOOK_URL=https://your-public-url/webhook
 

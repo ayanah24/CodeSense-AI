@@ -147,7 +147,6 @@ REDIS_URL=redis://redis:6379
 GITHUB_CLIENT_ID=your_production_github_client_id
 GITHUB_CLIENT_SECRET=your_production_github_client_secret
 GITHUB_CALLBACK_URL=https://codesense-ai.duckdns.org/auth/github/callback
-GITHUB_TOKEN=your_github_personal_access_token
 GITHUB_WEBHOOK_SECRET=your_production_webhook_secret
 
 # Public Webhook URL

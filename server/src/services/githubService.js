@@ -1,14 +1,22 @@
 import axios from 'axios';
-import 'dotenv/config';
+import { decrypt } from '../utils/encryption.js';
+
+function getGitHubHeaders(encryptedAccessToken, accept) {
+    if (!encryptedAccessToken) {
+        throw new Error('Missing repository GitHub access token');
+    }
+
+    return {
+        Authorization: `Bearer ${decrypt(encryptedAccessToken)}`,
+        Accept: accept,
+    };
+}
 
 // Fetch the diff of a pull request from GitHub
-async function fetchPRDiff(diffUrl) {
+async function fetchPRDiff(diffUrl, encryptedAccessToken) {
     try {
         const response = await axios.get(diffUrl, {
-            headers: {
-                Authorization: `Bearer ${process.env.GITHUB_TOKEN}`,
-                Accept: 'application/vnd.github.v3.diff',
-            },
+            headers: getGitHubHeaders(encryptedAccessToken, 'application/vnd.github.v3.diff'),
         });
         return response.data;
     } catch (error) {
@@ -74,7 +82,7 @@ ${positivesSection}
 }
 
 //post comment on github pr
-async function postPRComment(repoFullName, prNumber, review) {
+async function postPRComment(repoFullName, prNumber, review, encryptedAccessToken) {
     try {
         const comment = formatReviewComment(review);
 
@@ -82,10 +90,7 @@ async function postPRComment(repoFullName, prNumber, review) {
             `https://api.github.com/repos/${repoFullName}/issues/${prNumber}/comments`,
             { body: comment },
             {
-                headers: {
-                    Authorization: `Bearer ${process.env.GITHUB_TOKEN}`,
-                    Accept: 'application/vnd.github.v3+json',
-                },
+                headers: getGitHubHeaders(encryptedAccessToken, 'application/vnd.github.v3+json'),
             }
         );
         console.log(`Posted review comment on PR #${prNumber} in ${repoFullName}`);
@@ -96,7 +101,7 @@ async function postPRComment(repoFullName, prNumber, review) {
 }
 
 //set github status check(Merge gate)
-async function setStatusCheck(repoFullName, commitSha, score, minScore = 70) {
+async function setStatusCheck(repoFullName, commitSha, score, encryptedAccessToken, minScore = 70) {
     try {
         const passed = score >= minScore;
         await axios.post(
@@ -110,10 +115,7 @@ async function setStatusCheck(repoFullName, commitSha, score, minScore = 70) {
                 context: 'CodeSense AI',
             },
             {
-                headers: {
-                    Authorization: `Bearer ${process.env.GITHUB_TOKEN}`,
-                    Accept: 'application/vnd.github.v3+json',
-                },
+                headers: getGitHubHeaders(encryptedAccessToken, 'application/vnd.github.v3+json'),
             }
         );
         console.log(
@@ -125,4 +127,4 @@ async function setStatusCheck(repoFullName, commitSha, score, minScore = 70) {
     }
 }
 
-export { fetchPRDiff, postPRComment, setStatusCheck }; 
+export { fetchPRDiff, postPRComment, setStatusCheck };
