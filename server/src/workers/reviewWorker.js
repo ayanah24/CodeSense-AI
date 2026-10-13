@@ -44,7 +44,19 @@ const worker = new Worker(
     let repo = null;
     let encryptedGitHubToken = null;
     if (!isApiReview) {
-      repo = await Repo.findOne({ repoName, isActive: true });
+      const { repoId, githubRepoId, userId } = job.data;
+      if (!repoId || !githubRepoId || !userId) {
+        throw new Error('Webhook job is missing connected repository identity');
+      }
+
+      // Re-check the repository at execution time. It may have been
+      // disconnected after the webhook was accepted but before the worker ran.
+      repo = await Repo.findOne({
+        _id: repoId,
+        githubRepoId,
+        userId,
+        isActive: true,
+      });
       if (!repo) {
         throw new Error('Connected repository not found or inactive');
       }

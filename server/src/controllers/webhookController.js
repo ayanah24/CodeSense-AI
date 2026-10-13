@@ -1,5 +1,6 @@
 import verifySignature from '../utils/verifySignature.js';
 import reviewQueue from '../queues/reviewQueue.js';
+import Repo from '../models/Repo.js';
 
 async function handleWebhook(req, res) {
   try {
@@ -28,6 +29,21 @@ async function handleWebhook(req, res) {
       console.log(`  Action: ${action}`);
 
       if (action === 'opened' || action === 'synchronize') {
+        if (!pull_request?.number || !pull_request?.head?.sha || !repository?.id || !repository?.full_name) {
+          return res.status(400).json({ error: 'Invalid pull request payload' });
+        }
+
+        //checks active users only go through process
+        const connectedRepo = await Repo.findOne({
+          githubRepoId: repository.id,
+          isActive: true,
+        });
+
+        if (!connectedRepo) {
+          console.warn(`Ignoring pull request event for unconnected repository ${repository.full_name}`);
+          return res.status(202).json({ received: true });
+        }
+
         const prData = {
           prNumber: pull_request.number,
           prTitle: pull_request.title,
@@ -35,6 +51,9 @@ async function handleWebhook(req, res) {
           diffUrl: pull_request.diff_url,
           repoName: repository.full_name,
           repoFullName: repository.full_name,
+          repoId: connectedRepo._id.toString(),
+          githubRepoId: connectedRepo.githubRepoId,
+          userId: connectedRepo.userId.toString(),
           commitSha: pull_request.head.sha,
           action,
         };
@@ -44,7 +63,9 @@ async function handleWebhook(req, res) {
           'review-pr',
           prData,
           {
-            jobId: `pr-${repository.full_name}-${pull_request.number}-${action}`,
+            // One review per immutable PR revision. Re-deliveries for the same
+            // commit reuse this ID, while a new push gets a new review job.
+            jobId: `pr-${repository.id}-${pull_request.number}-${pull_request.head.sha}`,
           }
         );
         console.log(`Queued job ${job.id} for PR #${pull_request.number}`);
