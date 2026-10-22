@@ -19,7 +19,17 @@ jobs:
             set -e
             cd ~/CodeSense-AI
             echo "Pulling latest main"
-            git pull --ff-only origin main
+            for attempt in 1 2 3; do
+              if git pull --ff-only origin main; then
+                break
+              fi
+              if [ "$attempt" -eq 3 ]; then
+                echo "GitHub pull failed after 3 attempts"
+                exit 1
+              fi
+              echo "GitHub connection failed (attempt $attempt/3); retrying in $((attempt * 10)) seconds"
+              sleep $((attempt * 10))
+            done
             echo "Deploying commit $(git rev-parse --short HEAD)"
             echo "Building client image"
             docker compose build client
