@@ -21,8 +21,12 @@ jobs:
             echo "Pulling latest main"
             git pull --ff-only origin main
             echo "Deploying commit $(git rev-parse --short HEAD)"
-            echo "Building Docker images"
-            docker compose --parallel 1 build
+            echo "Building client image"
+            docker compose build client
+            echo "Building server image"
+            docker compose build server
+            echo "Building worker image"
+            docker compose build worker
             echo "Starting containers"
             docker compose up -d --force-recreate
             echo "Checking frontend response"
