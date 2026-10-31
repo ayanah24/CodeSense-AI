@@ -183,8 +183,8 @@ Expected Output:
 ```
 NAME                 COMMAND                  SERVICE   STATUS    PORTS
 codesense-client-1   "/docker-entrypoint.…"   client    running   0.0.0.0:8000->80/tcp
-codesense-mongo-1    "docker-entrypoint.s…"   mongo     running   0.0.0.0:27017->27017/tcp
-codesense-redis-1    "docker-entrypoint.s…"   redis     running   0.0.0.0:6379->6379/tcp
+codesense-mongo-1    "docker-entrypoint.s…"   mongo     running
+codesense-redis-1    "docker-entrypoint.s…"   redis     running
 codesense-server-1   "docker-entrypoint.s…"   server    running   0.0.0.0:5000->5000/tcp
 codesense-worker-1   "docker-entrypoint.s…"   worker    running   
 ```
